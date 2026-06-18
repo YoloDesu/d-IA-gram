@@ -1,0 +1,18 @@
+:host {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+.canvas-surface {
+  height: 100%;
+  width: 100%;
+  background-color: #ffffff;
+  background-image:
+    linear-gradient(#eef2f7 1px, transparent 1px),
+    linear-gradient(90deg, #eef2f7 1px, transparent 1px);
+  background-size: 20px 20px;
+  outline: none;
+  overflow: hidden;
+  cursor: default;
+}

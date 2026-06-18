@@ -1,0 +1,30 @@
+<div class="dialog-backdrop" (click)="closed.emit()">
+  <div class="dialog-panel" (click)="$event.stopPropagation()">
+    <header class="mb-3 flex items-center justify-between">
+      <h2 class="text-lg font-semibold text-slate-800">Exportar para LLM</h2>
+      <button class="text-slate-400 hover:text-slate-600" (click)="closed.emit()">✕</button>
+    </header>
+
+    <p class="mb-2 text-sm text-slate-500">
+      Copie este JSON e envie para uma LLM. Ela pode modificar os diagramas e devolver o
+      arquivo, que você reimporta aqui.
+    </p>
+
+    <textarea
+      class="h-80 w-full resize-none rounded border border-slate-300 p-2 font-mono text-xs"
+      readonly>{{ json() }}</textarea>
+
+    <footer class="mt-3 flex justify-end gap-2">
+      <button
+        class="rounded border border-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50"
+        (click)="download()">
+        Baixar .json
+      </button>
+      <button
+        class="rounded bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
+        (click)="copy()">
+        {{ copied() ? 'Copiado!' : 'Copiar' }}
+      </button>
+    </footer>
+  </div>
+</div>

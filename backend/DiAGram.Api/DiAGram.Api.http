@@ -1,0 +1,6 @@
+@DiAGram.Api_HostAddress = http://localhost:5294
+
+GET {{DiAGram.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

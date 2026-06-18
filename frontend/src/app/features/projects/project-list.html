@@ -1,0 +1,48 @@
+<div class="mx-auto max-w-4xl p-8">
+  <header class="mb-8">
+    <h1 class="text-3xl font-bold text-slate-800">d-IA-gram</h1>
+    <p class="text-slate-500">Editor de fluxogramas com exportação para LLM.</p>
+  </header>
+
+  <form class="mb-6 flex gap-2" (submit)="createProject(); $event.preventDefault()">
+    <input
+      class="flex-1 rounded border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+      type="text"
+      placeholder="Nome do novo projeto"
+      [ngModel]="newName()"
+      (ngModelChange)="newName.set($event)"
+      name="newName" />
+    <button
+      class="rounded bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+      type="submit"
+      [disabled]="!newName().trim()">
+      Criar projeto
+    </button>
+  </form>
+
+  @if (error()) {
+    <p class="mb-4 rounded bg-red-50 px-3 py-2 text-sm text-red-700">{{ error() }}</p>
+  }
+
+  @if (projects().length === 0) {
+    <p class="text-slate-400">Nenhum projeto ainda. Crie o primeiro acima.</p>
+  } @else {
+    <ul class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      @for (project of projects(); track project.id) {
+        <li>
+          <button
+            class="w-full rounded-lg border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:border-blue-400 hover:shadow"
+            (click)="openProject(project.id)">
+            <span class="block font-semibold text-slate-800">{{ project.name }}</span>
+            @if (project.description) {
+              <span class="block text-sm text-slate-500">{{ project.description }}</span>
+            }
+            <span class="mt-2 block text-xs text-slate-400">
+              {{ project.diagramCount }} diagrama(s)
+            </span>
+          </button>
+        </li>
+      }
+    </ul>
+  }
+</div>

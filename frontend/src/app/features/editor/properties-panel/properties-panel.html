@@ -1,0 +1,18 @@
+<div class="p-3">
+  <h2 class="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Propriedades</h2>
+
+  @if (selected(); as cell) {
+    <label class="mb-1 block text-xs text-slate-500">Tipo</label>
+    <p class="mb-3 text-sm capitalize text-slate-700">{{ cell.kind === 'edge' ? 'Conexão' : 'Nó' }}</p>
+
+    <label class="mb-1 block text-xs text-slate-500" for="cell-label">Rótulo</label>
+    <input
+      id="cell-label"
+      class="w-full rounded border border-slate-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none"
+      type="text"
+      [ngModel]="draftLabel()"
+      (ngModelChange)="onLabelInput($event)" />
+  } @else {
+    <p class="text-sm text-slate-400">Selecione um nó ou conexão para editar.</p>
+  }
+</div>

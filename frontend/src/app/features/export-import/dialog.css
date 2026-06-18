@@ -1,0 +1,19 @@
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(15, 23, 42, 0.5);
+  padding: 1rem;
+}
+
+.dialog-panel {
+  width: 100%;
+  max-width: 42rem;
+  border-radius: 0.5rem;
+  background-color: #ffffff;
+  padding: 1.25rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}

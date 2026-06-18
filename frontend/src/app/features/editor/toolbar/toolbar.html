@@ -1,0 +1,35 @@
+<div class="flex flex-wrap items-center gap-2">
+  <span class="mr-1 text-xs font-semibold uppercase tracking-wide text-slate-400">Adicionar</span>
+  @for (button of nodeButtons; track button.type) {
+    <button
+      class="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:border-blue-400 hover:bg-blue-50"
+      (click)="addNode.emit(button.type)">
+      + {{ button.label }}
+    </button>
+  }
+
+  <span class="mx-2 h-5 w-px bg-slate-200"></span>
+
+  <button
+    class="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 disabled:opacity-40"
+    [disabled]="!canDelete()"
+    (click)="deleteSelected.emit()">
+    Excluir
+  </button>
+
+  <div class="ml-auto flex items-center gap-2">
+    @if (saving()) {
+      <span class="text-xs text-slate-400">Salvando…</span>
+    }
+    <button
+      class="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
+      (click)="importRequested.emit()">
+      Importar
+    </button>
+    <button
+      class="rounded bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700"
+      (click)="exportRequested.emit()">
+      Exportar p/ LLM
+    </button>
+  </div>
+</div>
