@@ -1,0 +1,2330 @@
+{
+  "$schema": "d-ia-gram-v1",
+  "format_version": "1.0.0",
+  "instructions_for_llm": "Você recebeu um arquivo de exportação do d-IA-gram (editor de fluxogramas). Modifique APENAS o array \"diagrams\" seguindo as regras em \"capabilities\". Use somente os \"node_types\" (campo type) e \"line_style\" de \"edge_types\" listados. Preserve o \"id\" de cada nó/aresta existente; para novos elementos gere um UUID v4. Toda aresta deve referenciar \"sourceNodeId\" e \"targetNodeId\" de nós existentes. Posições em pixels (origem no canto superior esquerdo). Retorne o JSON COMPLETO (com $schema, format_version, capabilities e diagrams), sem texto extra fora do JSON.",
+  "capabilities": {
+    "node_types": [
+      {
+        "type": "process",
+        "shape": "rectangle",
+        "description": "Passo de processamento / ação."
+      },
+      {
+        "type": "decision",
+        "shape": "diamond",
+        "description": "Ponto de decisão; normalmente tem duas saídas (sim/não)."
+      },
+      {
+        "type": "terminal",
+        "shape": "rounded_rectangle",
+        "description": "Início ou fim do fluxo. Rótulo típico: \"Início\" ou \"Fim\"."
+      },
+      {
+        "type": "io",
+        "shape": "parallelogram",
+        "description": "Entrada ou saída de dados (ler/escrever)."
+      }
+    ],
+    "edge_types": [
+      {
+        "type": "directed_solid",
+        "line_style": "solid",
+        "description": "Fluxo de controle padrão."
+      },
+      {
+        "type": "directed_dashed",
+        "line_style": "dashed",
+        "description": "Fluxo opcional ou de exceção."
+      }
+    ],
+    "supported_operations": [
+      "add_node",
+      "remove_node",
+      "update_node_label",
+      "update_node_position",
+      "add_edge",
+      "remove_edge",
+      "update_edge_label"
+    ],
+    "position_system": {
+      "unit": "px",
+      "origin": "top-left",
+      "recommended_spacing": 120
+    },
+    "layout_hints": {
+      "flow_direction": "top-to-bottom",
+      "main_flow": "Mantenha o caminho principal (caminho feliz) em uma coluna vertical central, incrementando y em ~120px por passo. Não empilhe TODOS os nós em uma única coluna.",
+      "branching": "Em cada nó \"decision\", faça o ramo principal (ex.: \"sim\") continuar para baixo na coluna central, e o ramo alternativo (ex.: \"não\") seguir para uma coluna lateral com offset horizontal de +300px (à direita) ou -300px (à esquerda). Distribua os ramos lateralmente em vez de empilhá-los verticalmente.",
+      "columns": "Use de 3 a 5 colunas no eixo x quando houver ramificações: uma coluna central para o fluxo principal e colunas laterais para exceções, validações que falham e retornos.",
+      "spacing": {
+        "vertical": 120,
+        "horizontal": 300
+      }
+    },
+    "size_defaults": {
+      "process": {
+        "width": 160,
+        "height": 60
+      },
+      "decision": {
+        "width": 120,
+        "height": 80
+      },
+      "terminal": {
+        "width": 140,
+        "height": 50
+      },
+      "io": {
+        "width": 160,
+        "height": 60
+      }
+    }
+  },
+  "diagrams": [
+    {
+      "id": "afd275ea-3b48-46c3-b898-3796c668ba0e",
+      "name": "LLM Wiki - implantação, documentação e governança",
+      "nodes": [
+        {
+          "id": "6a55d9bd-02c6-43e3-a74f-822d5208bc79",
+          "type": "terminal",
+          "label": "Início\nImplantação do LLM Wiki",
+          "position": {
+            "x": 650,
+            "y": 40
+          },
+          "size": {
+            "width": 234,
+            "height": 78
+          }
+        },
+        {
+          "id": "5a34ebbb-97f1-4457-8c51-a8fc021fb6bc",
+          "type": "process",
+          "label": "Definir escopo, objetivos,\ndono e público-alvo",
+          "position": {
+            "x": 650,
+            "y": 150
+          },
+          "size": {
+            "width": 274,
+            "height": 82
+          }
+        },
+        {
+          "id": "6e470a42-a4c5-4002-b5fa-9ee459237d29",
+          "type": "process",
+          "label": "Criar governança:\npadrões, papéis e SLAs",
+          "position": {
+            "x": 650,
+            "y": 270
+          },
+          "size": {
+            "width": 238,
+            "height": 82
+          }
+        },
+        {
+          "id": "b859daa1-d397-4469-948f-1c55f708d3f2",
+          "type": "io",
+          "label": "Entrada de informações:\nrepos, READMEs, incidentes,\nrunbooks, scripts e processos",
+          "position": {
+            "x": 650,
+            "y": 390
+          },
+          "size": {
+            "width": 301,
+            "height": 106
+          }
+        },
+        {
+          "id": "2d5746b4-8b27-49f9-969b-a3be9ff460a1",
+          "type": "decision",
+          "label": "A entrada é de\nprojeto existente?",
+          "position": {
+            "x": 650,
+            "y": 525
+          },
+          "size": {
+            "width": 189,
+            "height": 110
+          }
+        },
+        {
+          "id": "d47b3ce2-7255-40ad-8489-201e62a47377",
+          "type": "process",
+          "label": "Inventariar projetos existentes\ne artefatos disponíveis",
+          "position": {
+            "x": 650,
+            "y": 665
+          },
+          "size": {
+            "width": 310,
+            "height": 82
+          }
+        },
+        {
+          "id": "745d02a0-aaa2-484d-894f-5e2e554dc142",
+          "type": "process",
+          "label": "Classificar por criticidade,\nsistema, área e dono técnico",
+          "position": {
+            "x": 650,
+            "y": 790
+          },
+          "size": {
+            "width": 292,
+            "height": 82
+          }
+        },
+        {
+          "id": "6b5bc02f-79d1-48e9-8f8f-95728e6bea58",
+          "type": "decision",
+          "label": "Existe owner\nidentificado?",
+          "position": {
+            "x": 650,
+            "y": 915
+          },
+          "size": {
+            "width": 170,
+            "height": 110
+          }
+        },
+        {
+          "id": "e78cbbf7-8bf2-418b-8883-3d6c4e8354d0",
+          "type": "io",
+          "label": "Coletar material bruto\nem /raw por projeto",
+          "position": {
+            "x": 650,
+            "y": 1050
+          },
+          "size": {
+            "width": 238,
+            "height": 82
+          }
+        },
+        {
+          "id": "16845daa-97d7-4b32-b649-0accc59ad513",
+          "type": "process",
+          "label": "Rodar triagem de segurança:\nsegredos, PII, credenciais e dados sensíveis",
+          "position": {
+            "x": 650,
+            "y": 1180
+          },
+          "size": {
+            "width": 310,
+            "height": 82
+          }
+        },
+        {
+          "id": "1ccc4135-78c1-4548-a486-dbbc19282e05",
+          "type": "decision",
+          "label": "Conteúdo seguro\npara documentar?",
+          "position": {
+            "x": 650,
+            "y": 1320
+          },
+          "size": {
+            "width": 173,
+            "height": 110
+          }
+        },
+        {
+          "id": "42708992-b48e-466c-bdeb-e479b58b8ec8",
+          "type": "process",
+          "label": "Normalizar estrutura:\nREADME, HANDOFF,\nrunbooks, ADRs e incidentes",
+          "position": {
+            "x": 650,
+            "y": 1465
+          },
+          "size": {
+            "width": 283,
+            "height": 106
+          }
+        },
+        {
+          "id": "26ceac75-c0f7-4faa-ae0d-b01c949c6565",
+          "type": "process",
+          "label": "Criar/atualizar documentação\ncanônica do projeto",
+          "position": {
+            "x": 650,
+            "y": 1600
+          },
+          "size": {
+            "width": 292,
+            "height": 82
+          }
+        },
+        {
+          "id": "2efb9259-bb0f-409a-b164-3fb3577cb75c",
+          "type": "process",
+          "label": "Adicionar metadados:\nowner, status, tags, data,\ncriticidade e fonte",
+          "position": {
+            "x": 650,
+            "y": 1735
+          },
+          "size": {
+            "width": 274,
+            "height": 106
+          }
+        },
+        {
+          "id": "575321da-3e25-4fc6-97cc-074f6edc1be4",
+          "type": "process",
+          "label": "Executar linting documental\ne validações automáticas",
+          "position": {
+            "x": 650,
+            "y": 1870
+          },
+          "size": {
+            "width": 283,
+            "height": 82
+          }
+        },
+        {
+          "id": "5acfcca6-d1be-41a4-8bb3-af0db5f2bc93",
+          "type": "decision",
+          "label": "Lint passou?",
+          "position": {
+            "x": 650,
+            "y": 2010
+          },
+          "size": {
+            "width": 170,
+            "height": 110
+          }
+        },
+        {
+          "id": "f9c9fc4f-dba2-4594-9307-57797533a3db",
+          "type": "process",
+          "label": "Validar links, referências,\ndiagramas e anexos",
+          "position": {
+            "x": 650,
+            "y": 2155
+          },
+          "size": {
+            "width": 283,
+            "height": 82
+          }
+        },
+        {
+          "id": "1c0d59f4-af0d-4de6-876b-bc6bd3d727ae",
+          "type": "decision",
+          "label": "Há conflito,\nduplicidade ou doc obsoleta?",
+          "position": {
+            "x": 650,
+            "y": 2285
+          },
+          "size": {
+            "width": 240,
+            "height": 110
+          }
+        },
+        {
+          "id": "31173c0c-bb74-4ae1-8c03-d5bafbeeb4a8",
+          "type": "process",
+          "label": "Revisão humana obrigatória:\ntécnico, negócio e segurança",
+          "position": {
+            "x": 650,
+            "y": 2440
+          },
+          "size": {
+            "width": 292,
+            "height": 82
+          }
+        },
+        {
+          "id": "84d6c5d2-5d9f-4aea-9881-cd1bf7e50434",
+          "type": "decision",
+          "label": "Aprovado por\nresponsável humano?",
+          "position": {
+            "x": 650,
+            "y": 2585
+          },
+          "size": {
+            "width": 197,
+            "height": 110
+          }
+        },
+        {
+          "id": "8e0c70ac-79cf-4607-babc-c4b3a48f1be2",
+          "type": "process",
+          "label": "Abrir PR/merge no repositório\nLLM Wiki / docs-as-code",
+          "position": {
+            "x": 650,
+            "y": 2735
+          },
+          "size": {
+            "width": 301,
+            "height": 82
+          }
+        },
+        {
+          "id": "2f5f2596-b0bc-4775-8a7a-643d289654f0",
+          "type": "process",
+          "label": "Pipeline CI:\nlint final, build,\npermissões e auditoria",
+          "position": {
+            "x": 650,
+            "y": 2865
+          },
+          "size": {
+            "width": 238,
+            "height": 106
+          }
+        },
+        {
+          "id": "31b666fd-e2e9-49ce-9556-f068ad00c9d7",
+          "type": "decision",
+          "label": "CI passou?",
+          "position": {
+            "x": 650,
+            "y": 2995
+          },
+          "size": {
+            "width": 170,
+            "height": 110
+          }
+        },
+        {
+          "id": "c8aacd2a-89db-4056-8512-93ee5a68d96f",
+          "type": "process",
+          "label": "Publicar e reindexar:\nbusca, embeddings e catálogo",
+          "position": {
+            "x": 650,
+            "y": 3145
+          },
+          "size": {
+            "width": 292,
+            "height": 82
+          }
+        },
+        {
+          "id": "436987d3-63ca-48f3-bb95-69bdc73997f2",
+          "type": "process",
+          "label": "Testar perguntas reais:\nsetup, deploy, incidentes,\nowner e rollback",
+          "position": {
+            "x": 650,
+            "y": 3275
+          },
+          "size": {
+            "width": 274,
+            "height": 106
+          }
+        },
+        {
+          "id": "736a1977-baa9-4b06-9041-8d9136a22e83",
+          "type": "decision",
+          "label": "Resposta tem fonte,\nrecência e confiança?",
+          "position": {
+            "x": 650,
+            "y": 3415
+          },
+          "size": {
+            "width": 213,
+            "height": 110
+          }
+        },
+        {
+          "id": "46042da0-5eb4-4d40-9b1c-089f8e560ad2",
+          "type": "terminal",
+          "label": "Uso liberado\ncom governança",
+          "position": {
+            "x": 650,
+            "y": 3565
+          },
+          "size": {
+            "width": 180,
+            "height": 78
+          }
+        },
+        {
+          "id": "4445a24a-2ba5-455a-978e-ce68bbc6e016",
+          "type": "process",
+          "label": "Operação contínua:\nuso, feedback, métricas\ne melhorias",
+          "position": {
+            "x": 650,
+            "y": 3685
+          },
+          "size": {
+            "width": 247,
+            "height": 106
+          }
+        },
+        {
+          "id": "e769d050-257c-4733-a22e-0fcd9c8a3fac",
+          "type": "process",
+          "label": "Rotina periódica:\nstale check, revisão de acesso\ne atualização pós-mudança",
+          "position": {
+            "x": 650,
+            "y": 3820
+          },
+          "size": {
+            "width": 310,
+            "height": 106
+          }
+        },
+        {
+          "id": "1a6b210c-78a5-4660-b8f1-8f20545f4964",
+          "type": "terminal",
+          "label": "Fim / ciclo reinicia\nquando houver mudança",
+          "position": {
+            "x": 650,
+            "y": 3960
+          },
+          "size": {
+            "width": 218,
+            "height": 78
+          }
+        },
+        {
+          "id": "0f42b259-8295-4ae5-969e-9ecd4137b62c",
+          "type": "process",
+          "label": "Definir papéis:\nWiki Owner, Project Owner,\nRevisor e Aprovador",
+          "position": {
+            "x": 330,
+            "y": 270
+          },
+          "size": {
+            "width": 274,
+            "height": 106
+          }
+        },
+        {
+          "id": "ff091f6b-01f4-4805-8b9a-3468855f884e",
+          "type": "process",
+          "label": "Definir política de acesso:\nRBAC, confidencialidade\ne auditoria",
+          "position": {
+            "x": 330,
+            "y": 390
+          },
+          "size": {
+            "width": 283,
+            "height": 106
+          }
+        },
+        {
+          "id": "a31b2eac-9ba0-4efd-9a0a-a565b0cd04fe",
+          "type": "process",
+          "label": "Criar padrão editorial:\nnomes, pastas, linguagem\ne exemplos",
+          "position": {
+            "x": 330,
+            "y": 510
+          },
+          "size": {
+            "width": 256,
+            "height": 106
+          }
+        },
+        {
+          "id": "356b28fd-42a5-4188-809a-10764b51e98a",
+          "type": "process",
+          "label": "Critério de pronto:\ndoc revisada, linkada,\nsem segredo e com owner",
+          "position": {
+            "x": 330,
+            "y": 630
+          },
+          "size": {
+            "width": 247,
+            "height": 106
+          }
+        },
+        {
+          "id": "99ff714c-dfe3-4f91-87c0-8e2a9389a0d5",
+          "type": "process",
+          "label": "Projeto novo:\naplicar template desde o kickoff",
+          "position": {
+            "x": 980,
+            "y": 620
+          },
+          "size": {
+            "width": 310,
+            "height": 82
+          }
+        },
+        {
+          "id": "43cc3e74-c3ae-47ae-a245-cb4e96bf87f1",
+          "type": "process",
+          "label": "Checklist obrigatório:\nREADME, arquitetura,\nsetup, deploy e rollback",
+          "position": {
+            "x": 980,
+            "y": 745
+          },
+          "size": {
+            "width": 256,
+            "height": 106
+          }
+        },
+        {
+          "id": "625312ef-9493-4283-8359-0716db25b8e8",
+          "type": "process",
+          "label": "Criar docs no mesmo PR\nda entrega técnica",
+          "position": {
+            "x": 980,
+            "y": 870
+          },
+          "size": {
+            "width": 238,
+            "height": 82
+          }
+        },
+        {
+          "id": "abbee064-a1e3-47c0-ba66-3addcabf72c9",
+          "type": "process",
+          "label": "Revisar documentação junto\ncom code review",
+          "position": {
+            "x": 980,
+            "y": 995
+          },
+          "size": {
+            "width": 274,
+            "height": 82
+          }
+        },
+        {
+          "id": "b26c6121-75be-465f-a874-bc8288bd3c7b",
+          "type": "process",
+          "label": "Owner ausente:\nmarcar como órfão e acionar liderança",
+          "position": {
+            "x": 330,
+            "y": 915
+          },
+          "size": {
+            "width": 310,
+            "height": 82
+          }
+        },
+        {
+          "id": "380e00e7-6c19-488a-976d-1824a18ce097",
+          "type": "process",
+          "label": "Atribuir responsável temporário\ne prazo de regularização",
+          "position": {
+            "x": 330,
+            "y": 1035
+          },
+          "size": {
+            "width": 310,
+            "height": 82
+          }
+        },
+        {
+          "id": "20b37166-93d3-497e-a1a1-4cc7e0ae61a3",
+          "type": "io",
+          "label": "Fontes aceitas:\nREADME, issues, tickets,\npostmortems, Teams, e-mails,\nprints e scripts",
+          "position": {
+            "x": 980,
+            "y": 1120
+          },
+          "size": {
+            "width": 292,
+            "height": 130
+          }
+        },
+        {
+          "id": "8b181782-245c-4882-8699-c2fc07321850",
+          "type": "process",
+          "label": "Mapear lacunas:\no que existe, o que falta\ne grau de confiabilidade",
+          "position": {
+            "x": 980,
+            "y": 1245
+          },
+          "size": {
+            "width": 265,
+            "height": 106
+          }
+        },
+        {
+          "id": "d6ce0bb0-a717-4649-81d6-fed85033a90d",
+          "type": "process",
+          "label": "Bloquear publicação automática\ndo conteúdo sensível",
+          "position": {
+            "x": 980,
+            "y": 1320
+          },
+          "size": {
+            "width": 310,
+            "height": 82
+          }
+        },
+        {
+          "id": "e898f0c7-6db2-4b5f-9737-233f17a5d690",
+          "type": "process",
+          "label": "Remover/mascarar:\nchaves, tokens, clientes,\nsenhas e dados pessoais",
+          "position": {
+            "x": 980,
+            "y": 1450
+          },
+          "size": {
+            "width": 265,
+            "height": 106
+          }
+        },
+        {
+          "id": "8579caa7-c1bf-4b25-a64c-5f9f81988d22",
+          "type": "process",
+          "label": "Revisão humana de segurança\nantes de voltar ao fluxo",
+          "position": {
+            "x": 980,
+            "y": 1580
+          },
+          "size": {
+            "width": 283,
+            "height": 82
+          }
+        },
+        {
+          "id": "82aa5652-6c09-441e-8549-19022c15de66",
+          "type": "process",
+          "label": "README:\nobjetivo, stack,\ncomo rodar e dependências",
+          "position": {
+            "x": 330,
+            "y": 1510
+          },
+          "size": {
+            "width": 265,
+            "height": 106
+          }
+        },
+        {
+          "id": "7f6b26ad-348d-4e31-a564-8e8bc92a3bd5",
+          "type": "process",
+          "label": "HANDOFF.md:\ncontexto, decisões,\nlimitações e próximos passos",
+          "position": {
+            "x": 330,
+            "y": 1630
+          },
+          "size": {
+            "width": 292,
+            "height": 106
+          }
+        },
+        {
+          "id": "1a5320a0-9a34-4063-ab52-c4aecbb46a06",
+          "type": "process",
+          "label": "Runbooks:\ndeploy, rollback,\nlogs, alertas e troubleshooting",
+          "position": {
+            "x": 330,
+            "y": 1750
+          },
+          "size": {
+            "width": 310,
+            "height": 106
+          }
+        },
+        {
+          "id": "a8af3e06-bcb1-4433-aafd-f864f356de08",
+          "type": "process",
+          "label": "ADRs:\ndecisões arquiteturais\ne motivação",
+          "position": {
+            "x": 330,
+            "y": 1870
+          },
+          "size": {
+            "width": 238,
+            "height": 106
+          }
+        },
+        {
+          "id": "a6ddb3f5-2c00-421a-bfe9-fe7d6db42e6a",
+          "type": "process",
+          "label": "Incidentes:\ncausa, impacto,\nsolução e prevenção",
+          "position": {
+            "x": 330,
+            "y": 1990
+          },
+          "size": {
+            "width": 230,
+            "height": 106
+          }
+        },
+        {
+          "id": "25f2e9bc-c86c-44b0-abd8-04f5a99535e8",
+          "type": "process",
+          "label": "Lint: frontmatter obrigatório\ne schema YAML/JSON",
+          "position": {
+            "x": 980,
+            "y": 1810
+          },
+          "size": {
+            "width": 301,
+            "height": 82
+          }
+        },
+        {
+          "id": "34981576-e7bd-4671-a492-159d36f086c2",
+          "type": "process",
+          "label": "Lint: Markdown, títulos,\nlinks internos e imagens",
+          "position": {
+            "x": 980,
+            "y": 1930
+          },
+          "size": {
+            "width": 256,
+            "height": 82
+          }
+        },
+        {
+          "id": "2b07cbb0-cf5b-4ea1-851a-79d58c6263c5",
+          "type": "process",
+          "label": "Lint: clareza, termos proibidos,\nglossário e tom institucional",
+          "position": {
+            "x": 980,
+            "y": 2050
+          },
+          "size": {
+            "width": 310,
+            "height": 82
+          }
+        },
+        {
+          "id": "5d6a845b-2eea-49a4-b8ad-34cb101ca841",
+          "type": "process",
+          "label": "Lint: secret scanning\ne dados sensíveis",
+          "position": {
+            "x": 980,
+            "y": 2170
+          },
+          "size": {
+            "width": 230,
+            "height": 82
+          }
+        },
+        {
+          "id": "aa5a591b-9e86-4c93-b3d2-eb7ea1f8baa1",
+          "type": "process",
+          "label": "Lint: data de revisão,\nstale docs e owner válido",
+          "position": {
+            "x": 980,
+            "y": 2290
+          },
+          "size": {
+            "width": 265,
+            "height": 82
+          }
+        },
+        {
+          "id": "4cf1bd27-9b52-408e-a670-109a49a91672",
+          "type": "process",
+          "label": "Falha no lint:\ngerar relatório de correção",
+          "position": {
+            "x": 40,
+            "y": 2010
+          },
+          "size": {
+            "width": 283,
+            "height": 82
+          }
+        },
+        {
+          "id": "b5e6598e-8b4c-4f9b-9d62-cfa33baba325",
+          "type": "process",
+          "label": "Corrigir estrutura,\nlinks, metadados ou linguagem",
+          "position": {
+            "x": 40,
+            "y": 2130
+          },
+          "size": {
+            "width": 301,
+            "height": 82
+          }
+        },
+        {
+          "id": "9dc9df8c-cdb9-48b0-a7c7-042e7bcb95c5",
+          "type": "process",
+          "label": "Atribuir correção ao owner\ncom prazo e prioridade",
+          "position": {
+            "x": 40,
+            "y": 2250
+          },
+          "size": {
+            "width": 274,
+            "height": 82
+          }
+        },
+        {
+          "id": "5ad19757-9cd0-4fc9-a6ec-180641d172ed",
+          "type": "process",
+          "label": "Triar conflito:\nfontes antigas, duplicadas\nou divergentes",
+          "position": {
+            "x": 330,
+            "y": 2285
+          },
+          "size": {
+            "width": 274,
+            "height": 106
+          }
+        },
+        {
+          "id": "5edbc199-e063-40df-80be-71bcb704570d",
+          "type": "decision",
+          "label": "Há fonte canônica\nconfiável?",
+          "position": {
+            "x": 330,
+            "y": 2425
+          },
+          "size": {
+            "width": 181,
+            "height": 110
+          }
+        },
+        {
+          "id": "b2a573d9-5f01-440c-b942-b447393646da",
+          "type": "process",
+          "label": "Escolher fonte canônica\ne arquivar duplicatas",
+          "position": {
+            "x": 330,
+            "y": 2560
+          },
+          "size": {
+            "width": 247,
+            "height": 82
+          }
+        },
+        {
+          "id": "a3f044be-23e4-4c6a-ad82-26aeaf7f5e0a",
+          "type": "process",
+          "label": "Reunião curta com owner\npara decidir verdade operacional",
+          "position": {
+            "x": 40,
+            "y": 2425
+          },
+          "size": {
+            "width": 310,
+            "height": 82
+          }
+        },
+        {
+          "id": "a53fa0f7-d224-4205-b089-655978782d69",
+          "type": "process",
+          "label": "Registrar decisão em ADR\nou nota de versão",
+          "position": {
+            "x": 40,
+            "y": 2560
+          },
+          "size": {
+            "width": 256,
+            "height": 82
+          }
+        },
+        {
+          "id": "38809d41-bea7-42a1-9b69-01e9721cdd46",
+          "type": "process",
+          "label": "Revisão reprovada:\nregistrar motivo e ajustes",
+          "position": {
+            "x": 980,
+            "y": 2585
+          },
+          "size": {
+            "width": 274,
+            "height": 82
+          }
+        },
+        {
+          "id": "4068d018-a4ae-41f5-8b7a-d6356438974b",
+          "type": "decision",
+          "label": "Precisa validação\nde negócio?",
+          "position": {
+            "x": 980,
+            "y": 2725
+          },
+          "size": {
+            "width": 181,
+            "height": 110
+          }
+        },
+        {
+          "id": "f3dd05fb-cdfc-47eb-91c3-6a23ddc99e91",
+          "type": "process",
+          "label": "Validação de negócio:\nregras, impacto e termos",
+          "position": {
+            "x": 1290,
+            "y": 2725
+          },
+          "size": {
+            "width": 256,
+            "height": 82
+          }
+        },
+        {
+          "id": "8f514a9d-87c7-474d-b5fa-3fd154adc1a7",
+          "type": "process",
+          "label": "Ajustes técnicos:\nsetup, deploy, rollback,\nlogs e dependências",
+          "position": {
+            "x": 980,
+            "y": 2860
+          },
+          "size": {
+            "width": 256,
+            "height": 106
+          }
+        },
+        {
+          "id": "1933e58f-d1fb-4a47-8a70-bd2b0a567de3",
+          "type": "process",
+          "label": "Ajustes de segurança:\nacesso, segredos e privacidade",
+          "position": {
+            "x": 1290,
+            "y": 2860
+          },
+          "size": {
+            "width": 310,
+            "height": 82
+          }
+        },
+        {
+          "id": "aa0ee854-b383-4201-b1ae-92d1ae242204",
+          "type": "process",
+          "label": "CI falhou:\nabrir issue automática\ncom logs do pipeline",
+          "position": {
+            "x": 980,
+            "y": 2995
+          },
+          "size": {
+            "width": 238,
+            "height": 106
+          }
+        },
+        {
+          "id": "21b0a0ae-a9a8-4913-8ec3-c8122e4734e1",
+          "type": "process",
+          "label": "Corrigir build, permissões,\nlinks quebrados ou índice",
+          "position": {
+            "x": 980,
+            "y": 3125
+          },
+          "size": {
+            "width": 283,
+            "height": 82
+          }
+        },
+        {
+          "id": "2f070ec4-8ad6-4bb6-a1e8-52337c06887b",
+          "type": "process",
+          "label": "Preparar chunking:\nseções pequenas, títulos claros\ne contexto por projeto",
+          "position": {
+            "x": 980,
+            "y": 3180
+          },
+          "size": {
+            "width": 310,
+            "height": 106
+          }
+        },
+        {
+          "id": "146950ed-eb6f-4cfb-a53f-5a1806dee847",
+          "type": "process",
+          "label": "Configurar recuperação:\npriorizar docs canônicas,\nrecentes e aprovadas",
+          "position": {
+            "x": 1290,
+            "y": 3180
+          },
+          "size": {
+            "width": 265,
+            "height": 106
+          }
+        },
+        {
+          "id": "95411601-6a37-481f-8f0c-f92de8b6439a",
+          "type": "process",
+          "label": "Aplicar permissões no índice:\nusuário só vê o que pode ver",
+          "position": {
+            "x": 1290,
+            "y": 3305
+          },
+          "size": {
+            "width": 301,
+            "height": 82
+          }
+        },
+        {
+          "id": "bc3bdcb8-0ed2-4222-a70b-275fbc2fefe5",
+          "type": "process",
+          "label": "Registrar auditoria:\nquem publicou, quando\ne origem da fonte",
+          "position": {
+            "x": 980,
+            "y": 3305
+          },
+          "size": {
+            "width": 230,
+            "height": 106
+          }
+        },
+        {
+          "id": "a3a28282-898a-4a58-b825-ff016830ab55",
+          "type": "io",
+          "label": "Conjunto de perguntas douradas:\nsetup, deploy, erro comum,\nowner, API e incidente",
+          "position": {
+            "x": 330,
+            "y": 3275
+          },
+          "size": {
+            "width": 310,
+            "height": 106
+          }
+        },
+        {
+          "id": "f0da93ad-b331-4bf0-9162-088a838c9843",
+          "type": "process",
+          "label": "Falha na avaliação:\nresposta sem citação,\nalucinada ou desatualizada",
+          "position": {
+            "x": 980,
+            "y": 3415
+          },
+          "size": {
+            "width": 274,
+            "height": 106
+          }
+        },
+        {
+          "id": "59f67578-780c-4656-954a-aa5903d5447e",
+          "type": "process",
+          "label": "Abrir gap documental:\npergunta sem resposta confiável",
+          "position": {
+            "x": 980,
+            "y": 3540
+          },
+          "size": {
+            "width": 310,
+            "height": 82
+          }
+        },
+        {
+          "id": "dc181cbe-629d-4a12-83eb-896df9d023a6",
+          "type": "process",
+          "label": "Encaminhar ao humano responsável\naté a doc ser corrigida",
+          "position": {
+            "x": 1290,
+            "y": 3540
+          },
+          "size": {
+            "width": 310,
+            "height": 82
+          }
+        },
+        {
+          "id": "8d549887-e821-44fb-b41a-2d90c4810182",
+          "type": "io",
+          "label": "Usuário pergunta ao LLM Wiki:\ncomo fazer, onde está,\nquem cuida, como resolver",
+          "position": {
+            "x": 330,
+            "y": 3565
+          },
+          "size": {
+            "width": 301,
+            "height": 106
+          }
+        },
+        {
+          "id": "f417108f-99bb-4b3f-8feb-e1d165ebcb52",
+          "type": "process",
+          "label": "LLM busca trechos aprovados\ncom permissões do usuário",
+          "position": {
+            "x": 330,
+            "y": 3690
+          },
+          "size": {
+            "width": 283,
+            "height": 82
+          }
+        },
+        {
+          "id": "dfc917e7-6e08-4d44-a6e1-c45c94509777",
+          "type": "io",
+          "label": "Resposta deve citar fonte,\nassumir incerteza e indicar owner",
+          "position": {
+            "x": 330,
+            "y": 3815
+          },
+          "size": {
+            "width": 310,
+            "height": 82
+          }
+        },
+        {
+          "id": "5ad14cf4-896d-45dc-8334-50ef0bac3797",
+          "type": "io",
+          "label": "Usuário avalia:\nútil, incorreto, faltou fonte\nou precisa atualizar",
+          "position": {
+            "x": 330,
+            "y": 3940
+          },
+          "size": {
+            "width": 301,
+            "height": 106
+          }
+        },
+        {
+          "id": "4980f903-9ec5-4bd2-a334-4dcce315850a",
+          "type": "process",
+          "label": "Stale check agendado:\ndocs sem revisão vencida",
+          "position": {
+            "x": 980,
+            "y": 3820
+          },
+          "size": {
+            "width": 256,
+            "height": 82
+          }
+        },
+        {
+          "id": "32c06e91-cbfc-4bbf-be33-c52554894f52",
+          "type": "process",
+          "label": "Notificar owner:\nrevisar, confirmar ou depreciar",
+          "position": {
+            "x": 980,
+            "y": 3945
+          },
+          "size": {
+            "width": 310,
+            "height": 82
+          }
+        },
+        {
+          "id": "f89a0c1e-8ea5-4d98-a4a8-4d7d91a9f659",
+          "type": "decision",
+          "label": "Houve mudança em código,\ninfra, processo ou incidente?",
+          "position": {
+            "x": 980,
+            "y": 4070
+          },
+          "size": {
+            "width": 240,
+            "height": 110
+          }
+        },
+        {
+          "id": "9b9eadf3-b807-442c-9ccc-a8cac4c5f9d4",
+          "type": "process",
+          "label": "Atualizar docs no mesmo PR\nou pós-incidente",
+          "position": {
+            "x": 980,
+            "y": 4205
+          },
+          "size": {
+            "width": 274,
+            "height": 82
+          }
+        },
+        {
+          "id": "c7ffa341-25ce-4eda-b7fd-440631e09cd4",
+          "type": "process",
+          "label": "Depreciar docs antigas:\nredirecionar e manter histórico",
+          "position": {
+            "x": 1290,
+            "y": 4070
+          },
+          "size": {
+            "width": 310,
+            "height": 82
+          }
+        },
+        {
+          "id": "ff72b01b-c9d2-4f66-b88b-c190f5575ecf",
+          "type": "process",
+          "label": "Métricas:\ncobertura por projeto,\ntempo de resposta, gaps,\nuso e retrabalho",
+          "position": {
+            "x": 1290,
+            "y": 3820
+          },
+          "size": {
+            "width": 256,
+            "height": 130
+          }
+        },
+        {
+          "id": "d23aae80-1c6b-491b-aa44-10cb0baf8373",
+          "type": "process",
+          "label": "Retrospectiva mensal:\najustar padrões, lints\ne backlog do wiki",
+          "position": {
+            "x": 1290,
+            "y": 3945
+          },
+          "size": {
+            "width": 238,
+            "height": 106
+          }
+        },
+        {
+          "id": "8dde14db-8a98-4673-a907-e70d6f70f322",
+          "type": "process",
+          "label": "Caso legado sem docs:\nentrevista técnica + análise\nde código e deploy atual",
+          "position": {
+            "x": 40,
+            "y": 1080
+          },
+          "size": {
+            "width": 292,
+            "height": 106
+          }
+        },
+        {
+          "id": "9d5a0f54-590e-4eb6-8a08-60e81c04c412",
+          "type": "process",
+          "label": "Caso fornecedor externo:\nregistrar contratos, limites,\nSLA e contato",
+          "position": {
+            "x": 40,
+            "y": 1205
+          },
+          "size": {
+            "width": 301,
+            "height": 106
+          }
+        },
+        {
+          "id": "8d2af69b-ea9e-4792-9b17-ae49f192e070",
+          "type": "decision",
+          "label": "Sistema crítico\nou regulado?",
+          "position": {
+            "x": 40,
+            "y": 1330
+          },
+          "size": {
+            "width": 170,
+            "height": 110
+          }
+        },
+        {
+          "id": "89452674-caa6-499e-9b22-8a562a7da43c",
+          "type": "process",
+          "label": "Exigir aprovação extra:\nsegurança, gestão e operação",
+          "position": {
+            "x": 40,
+            "y": 1465
+          },
+          "size": {
+            "width": 292,
+            "height": 82
+          }
+        },
+        {
+          "id": "1f807b4e-32fa-457a-9806-4610c6b5d620",
+          "type": "process",
+          "label": "Dados internos restritos:\nseparar wiki pública interna\ne wiki restrita",
+          "position": {
+            "x": 40,
+            "y": 1590
+          },
+          "size": {
+            "width": 292,
+            "height": 106
+          }
+        },
+        {
+          "id": "9e4109c8-a25b-4281-abd8-8ba6b71b276d",
+          "type": "process",
+          "label": "Arquivar material bruto\ncom rastreabilidade e acesso limitado",
+          "position": {
+            "x": 40,
+            "y": 1715
+          },
+          "size": {
+            "width": 310,
+            "height": 82
+          }
+        },
+        {
+          "id": "2b312be7-5c03-4332-9949-a5fe9a26e364",
+          "type": "io",
+          "label": "Backlog de melhorias:\ngaps, dúvidas recorrentes\ne docs órfãs",
+          "position": {
+            "x": 40,
+            "y": 3820
+          },
+          "size": {
+            "width": 265,
+            "height": 106
+          }
+        },
+        {
+          "id": "eb0f13c5-f5e5-49f1-94db-7d63ce6db802",
+          "type": "process",
+          "label": "Treinamento e adoção:\ncomo perguntar, citar fontes\ne pedir correção",
+          "position": {
+            "x": 40,
+            "y": 3945
+          },
+          "size": {
+            "width": 292,
+            "height": 106
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "34b1dba6-d02a-4c73-9ec4-7c29a494d71c",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "6a55d9bd-02c6-43e3-a74f-822d5208bc79",
+          "targetNodeId": "5a34ebbb-97f1-4457-8c51-a8fc021fb6bc",
+          "label": ""
+        },
+        {
+          "id": "2cd3d76f-7139-48cb-90ab-c61cdc93a49d",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "5a34ebbb-97f1-4457-8c51-a8fc021fb6bc",
+          "targetNodeId": "6e470a42-a4c5-4002-b5fa-9ee459237d29",
+          "label": ""
+        },
+        {
+          "id": "7a658275-7008-4092-8d6f-5103bb56a73a",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "6e470a42-a4c5-4002-b5fa-9ee459237d29",
+          "targetNodeId": "b859daa1-d397-4469-948f-1c55f708d3f2",
+          "label": ""
+        },
+        {
+          "id": "8eba6362-9f30-4477-a94e-5c71667609fb",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "b859daa1-d397-4469-948f-1c55f708d3f2",
+          "targetNodeId": "2d5746b4-8b27-49f9-969b-a3be9ff460a1",
+          "label": ""
+        },
+        {
+          "id": "fe794479-d3fc-453e-bdd0-d0138a9151a4",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "2d5746b4-8b27-49f9-969b-a3be9ff460a1",
+          "targetNodeId": "d47b3ce2-7255-40ad-8489-201e62a47377",
+          "label": "sim"
+        },
+        {
+          "id": "14335ac4-96a9-4e3e-a71c-9cfcbb9d9495",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "d47b3ce2-7255-40ad-8489-201e62a47377",
+          "targetNodeId": "745d02a0-aaa2-484d-894f-5e2e554dc142",
+          "label": ""
+        },
+        {
+          "id": "e1f43e39-4d9a-4d64-8b08-f0995fb0bae1",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "745d02a0-aaa2-484d-894f-5e2e554dc142",
+          "targetNodeId": "6b5bc02f-79d1-48e9-8f8f-95728e6bea58",
+          "label": ""
+        },
+        {
+          "id": "04519d46-8c4c-4309-8c21-7b296dfd03f4",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "6b5bc02f-79d1-48e9-8f8f-95728e6bea58",
+          "targetNodeId": "e78cbbf7-8bf2-418b-8883-3d6c4e8354d0",
+          "label": "sim"
+        },
+        {
+          "id": "37ea25ea-2396-47b1-aaab-f33d0a4cdc05",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "e78cbbf7-8bf2-418b-8883-3d6c4e8354d0",
+          "targetNodeId": "16845daa-97d7-4b32-b649-0accc59ad513",
+          "label": ""
+        },
+        {
+          "id": "13dc516e-3f05-480a-bda4-bebcc7a5dce7",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "16845daa-97d7-4b32-b649-0accc59ad513",
+          "targetNodeId": "1ccc4135-78c1-4548-a486-dbbc19282e05",
+          "label": ""
+        },
+        {
+          "id": "d66bdd7a-29e2-4c9b-8fa1-b89e5e3ea1ee",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "1ccc4135-78c1-4548-a486-dbbc19282e05",
+          "targetNodeId": "42708992-b48e-466c-bdeb-e479b58b8ec8",
+          "label": "sim"
+        },
+        {
+          "id": "f35e15af-c891-4e9b-92ac-f7c4f7a387f7",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "42708992-b48e-466c-bdeb-e479b58b8ec8",
+          "targetNodeId": "26ceac75-c0f7-4faa-ae0d-b01c949c6565",
+          "label": ""
+        },
+        {
+          "id": "d510d06f-dd96-4a0e-be41-eb1013e4a75f",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "26ceac75-c0f7-4faa-ae0d-b01c949c6565",
+          "targetNodeId": "2efb9259-bb0f-409a-b164-3fb3577cb75c",
+          "label": ""
+        },
+        {
+          "id": "f1e5ab15-7226-40eb-acaf-84e5e508ddeb",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "2efb9259-bb0f-409a-b164-3fb3577cb75c",
+          "targetNodeId": "575321da-3e25-4fc6-97cc-074f6edc1be4",
+          "label": ""
+        },
+        {
+          "id": "e53ef258-300f-45b8-83e0-25ee15ba8479",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "575321da-3e25-4fc6-97cc-074f6edc1be4",
+          "targetNodeId": "5acfcca6-d1be-41a4-8bb3-af0db5f2bc93",
+          "label": ""
+        },
+        {
+          "id": "8976fbbc-1098-4876-be53-4d3f1f9c0525",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "5acfcca6-d1be-41a4-8bb3-af0db5f2bc93",
+          "targetNodeId": "f9c9fc4f-dba2-4594-9307-57797533a3db",
+          "label": "sim"
+        },
+        {
+          "id": "2c5520ee-b99c-4161-b3dc-baaa89d0ff2e",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "f9c9fc4f-dba2-4594-9307-57797533a3db",
+          "targetNodeId": "1c0d59f4-af0d-4de6-876b-bc6bd3d727ae",
+          "label": ""
+        },
+        {
+          "id": "2a677f03-2832-4a39-bb53-702e827198f0",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "1c0d59f4-af0d-4de6-876b-bc6bd3d727ae",
+          "targetNodeId": "31173c0c-bb74-4ae1-8c03-d5bafbeeb4a8",
+          "label": "não"
+        },
+        {
+          "id": "93cfb118-654b-4a46-959d-e24b051eb373",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "31173c0c-bb74-4ae1-8c03-d5bafbeeb4a8",
+          "targetNodeId": "84d6c5d2-5d9f-4aea-9881-cd1bf7e50434",
+          "label": ""
+        },
+        {
+          "id": "d071047d-25ba-4332-ab33-8db85afc3f9f",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "84d6c5d2-5d9f-4aea-9881-cd1bf7e50434",
+          "targetNodeId": "8e0c70ac-79cf-4607-babc-c4b3a48f1be2",
+          "label": "sim"
+        },
+        {
+          "id": "687b9bba-726c-42af-9f9a-5f25a7d10508",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "8e0c70ac-79cf-4607-babc-c4b3a48f1be2",
+          "targetNodeId": "2f5f2596-b0bc-4775-8a7a-643d289654f0",
+          "label": ""
+        },
+        {
+          "id": "c0d0bd22-ef74-460b-83c8-1d12dd5f02c9",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "2f5f2596-b0bc-4775-8a7a-643d289654f0",
+          "targetNodeId": "31b666fd-e2e9-49ce-9556-f068ad00c9d7",
+          "label": ""
+        },
+        {
+          "id": "cf6c7735-2949-4ec1-9d77-9bd5c0aa3a81",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "31b666fd-e2e9-49ce-9556-f068ad00c9d7",
+          "targetNodeId": "c8aacd2a-89db-4056-8512-93ee5a68d96f",
+          "label": "sim"
+        },
+        {
+          "id": "56067af9-71b7-417e-92de-ee73f8cc3b51",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "c8aacd2a-89db-4056-8512-93ee5a68d96f",
+          "targetNodeId": "436987d3-63ca-48f3-bb95-69bdc73997f2",
+          "label": ""
+        },
+        {
+          "id": "d9e8a2b8-1645-4d3d-bd9e-6ec66d6aedd1",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "436987d3-63ca-48f3-bb95-69bdc73997f2",
+          "targetNodeId": "736a1977-baa9-4b06-9041-8d9136a22e83",
+          "label": ""
+        },
+        {
+          "id": "2bd5d86d-a9f0-44c0-a15f-cc0d82f3eb4f",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "736a1977-baa9-4b06-9041-8d9136a22e83",
+          "targetNodeId": "46042da0-5eb4-4d40-9b1c-089f8e560ad2",
+          "label": "sim"
+        },
+        {
+          "id": "84d4d687-1410-45ef-aed8-37145807de37",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "46042da0-5eb4-4d40-9b1c-089f8e560ad2",
+          "targetNodeId": "4445a24a-2ba5-455a-978e-ce68bbc6e016",
+          "label": ""
+        },
+        {
+          "id": "f20a18e7-e3ae-4c22-a49a-d3eb342d185f",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "4445a24a-2ba5-455a-978e-ce68bbc6e016",
+          "targetNodeId": "e769d050-257c-4733-a22e-0fcd9c8a3fac",
+          "label": ""
+        },
+        {
+          "id": "55e91cb4-77b3-4ec2-8910-75d7390f1399",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "e769d050-257c-4733-a22e-0fcd9c8a3fac",
+          "targetNodeId": "1a6b210c-78a5-4660-b8f1-8f20545f4964",
+          "label": ""
+        },
+        {
+          "id": "04b33639-4c39-4146-8c94-8e4e6ec0b64c",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "6e470a42-a4c5-4002-b5fa-9ee459237d29",
+          "targetNodeId": "0f42b259-8295-4ae5-969e-9ecd4137b62c",
+          "label": "papéis"
+        },
+        {
+          "id": "965591b8-752a-42f6-87c8-695ee9df2b95",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "0f42b259-8295-4ae5-969e-9ecd4137b62c",
+          "targetNodeId": "ff091f6b-01f4-4805-8b9a-3468855f884e",
+          "label": ""
+        },
+        {
+          "id": "9f813e0c-fe67-4a7d-bdbc-8ee5adfcb50d",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "ff091f6b-01f4-4805-8b9a-3468855f884e",
+          "targetNodeId": "a31b2eac-9ba0-4efd-9a0a-a565b0cd04fe",
+          "label": ""
+        },
+        {
+          "id": "33840d9b-3bb6-4683-954d-a3ab1cb6bad4",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "a31b2eac-9ba0-4efd-9a0a-a565b0cd04fe",
+          "targetNodeId": "356b28fd-42a5-4188-809a-10764b51e98a",
+          "label": ""
+        },
+        {
+          "id": "b076f826-eac1-40c4-8e70-110c1aade611",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "356b28fd-42a5-4188-809a-10764b51e98a",
+          "targetNodeId": "b859daa1-d397-4469-948f-1c55f708d3f2",
+          "label": "padrões prontos"
+        },
+        {
+          "id": "aa9e7ee6-f248-4e74-9fdd-2c6a90480a92",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "2d5746b4-8b27-49f9-969b-a3be9ff460a1",
+          "targetNodeId": "99ff714c-dfe3-4f91-87c0-8e2a9389a0d5",
+          "label": "não / projeto novo"
+        },
+        {
+          "id": "81395d3f-f109-4d50-9d8d-b832df9bead8",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "99ff714c-dfe3-4f91-87c0-8e2a9389a0d5",
+          "targetNodeId": "43cc3e74-c3ae-47ae-a245-cb4e96bf87f1",
+          "label": ""
+        },
+        {
+          "id": "2cb5d843-5052-487f-81f1-5f6d04c41c30",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "43cc3e74-c3ae-47ae-a245-cb4e96bf87f1",
+          "targetNodeId": "625312ef-9493-4283-8359-0716db25b8e8",
+          "label": ""
+        },
+        {
+          "id": "a8f5b36f-8d74-4d48-a8da-e1a84a2ba33c",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "625312ef-9493-4283-8359-0716db25b8e8",
+          "targetNodeId": "abbee064-a1e3-47c0-ba66-3addcabf72c9",
+          "label": ""
+        },
+        {
+          "id": "6dda597b-bed8-44e3-8530-8ec71f8f3489",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "abbee064-a1e3-47c0-ba66-3addcabf72c9",
+          "targetNodeId": "e78cbbf7-8bf2-418b-8883-3d6c4e8354d0",
+          "label": "docs iniciais"
+        },
+        {
+          "id": "2dbf77a2-1685-4fdc-ae22-ea1306601645",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "6b5bc02f-79d1-48e9-8f8f-95728e6bea58",
+          "targetNodeId": "b26c6121-75be-465f-a874-bc8288bd3c7b",
+          "label": "não"
+        },
+        {
+          "id": "043c0d2f-e1a3-4f28-a14c-83e250719b47",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "b26c6121-75be-465f-a874-bc8288bd3c7b",
+          "targetNodeId": "380e00e7-6c19-488a-976d-1824a18ce097",
+          "label": ""
+        },
+        {
+          "id": "79673293-67f8-41ec-bb59-01538c422f10",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "380e00e7-6c19-488a-976d-1824a18ce097",
+          "targetNodeId": "e78cbbf7-8bf2-418b-8883-3d6c4e8354d0",
+          "label": "owner temporário"
+        },
+        {
+          "id": "d27f5b5f-4fc0-43ec-b585-66e520723e1d",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "e78cbbf7-8bf2-418b-8883-3d6c4e8354d0",
+          "targetNodeId": "20b37166-93d3-497e-a1a1-4cc7e0ae61a3",
+          "label": "coletar fontes"
+        },
+        {
+          "id": "3af26fdf-8e0e-4b21-8ac3-a9c641726625",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "20b37166-93d3-497e-a1a1-4cc7e0ae61a3",
+          "targetNodeId": "8b181782-245c-4882-8699-c2fc07321850",
+          "label": ""
+        },
+        {
+          "id": "92336f8b-5f3b-4c4a-9c2c-38752eb9b421",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "8b181782-245c-4882-8699-c2fc07321850",
+          "targetNodeId": "16845daa-97d7-4b32-b649-0accc59ad513",
+          "label": "inventário qualificado"
+        },
+        {
+          "id": "3f0bed53-3c88-476c-94ad-e123cad40d80",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "d47b3ce2-7255-40ad-8489-201e62a47377",
+          "targetNodeId": "8dde14db-8a98-4673-a907-e70d6f70f322",
+          "label": "sem docs"
+        },
+        {
+          "id": "eb03f9e3-5939-4b56-b321-d87a4c4262e2",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "8dde14db-8a98-4673-a907-e70d6f70f322",
+          "targetNodeId": "9d5a0f54-590e-4eb6-8a08-60e81c04c412",
+          "label": "se aplicável"
+        },
+        {
+          "id": "448239ed-5dc1-492f-a369-1534f5b06ce7",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "9d5a0f54-590e-4eb6-8a08-60e81c04c412",
+          "targetNodeId": "8d2af69b-ea9e-4792-9b17-ae49f192e070",
+          "label": ""
+        },
+        {
+          "id": "dffab056-01b6-41f3-be47-511ba5aa19c8",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "8d2af69b-ea9e-4792-9b17-ae49f192e070",
+          "targetNodeId": "89452674-caa6-499e-9b22-8a562a7da43c",
+          "label": "sim"
+        },
+        {
+          "id": "360bf1e0-e795-43bd-b0fd-d4e012dbcab6",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "8d2af69b-ea9e-4792-9b17-ae49f192e070",
+          "targetNodeId": "1f807b4e-32fa-457a-9806-4610c6b5d620",
+          "label": "não, mas restrito"
+        },
+        {
+          "id": "448950dc-6f48-46f0-992d-15ed2594a016",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "89452674-caa6-499e-9b22-8a562a7da43c",
+          "targetNodeId": "1f807b4e-32fa-457a-9806-4610c6b5d620",
+          "label": ""
+        },
+        {
+          "id": "68df8f88-1d11-4a02-ae9b-161016ee3958",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "1f807b4e-32fa-457a-9806-4610c6b5d620",
+          "targetNodeId": "9e4109c8-a25b-4281-abd8-8ba6b71b276d",
+          "label": ""
+        },
+        {
+          "id": "ab773168-47fe-41cc-b851-2d69433acd4f",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "9e4109c8-a25b-4281-abd8-8ba6b71b276d",
+          "targetNodeId": "16845daa-97d7-4b32-b649-0accc59ad513",
+          "label": "com rastreabilidade"
+        },
+        {
+          "id": "f919c48b-8a38-46c3-9a65-81b56f3c2413",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "8dde14db-8a98-4673-a907-e70d6f70f322",
+          "targetNodeId": "e78cbbf7-8bf2-418b-8883-3d6c4e8354d0",
+          "label": "material mínimo"
+        },
+        {
+          "id": "a703240e-9bf6-44f9-8b0b-74f81b02b772",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "1ccc4135-78c1-4548-a486-dbbc19282e05",
+          "targetNodeId": "d6ce0bb0-a717-4649-81d6-fed85033a90d",
+          "label": "não"
+        },
+        {
+          "id": "770b7dcf-e330-4815-8117-814f0acf9fd5",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "d6ce0bb0-a717-4649-81d6-fed85033a90d",
+          "targetNodeId": "e898f0c7-6db2-4b5f-9737-233f17a5d690",
+          "label": ""
+        },
+        {
+          "id": "4de779fa-0ed6-4375-b530-72a1f704c8f4",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "e898f0c7-6db2-4b5f-9737-233f17a5d690",
+          "targetNodeId": "8579caa7-c1bf-4b25-a64c-5f9f81988d22",
+          "label": ""
+        },
+        {
+          "id": "e0a6a15e-7899-41a1-a63c-393b652fe99f",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "8579caa7-c1bf-4b25-a64c-5f9f81988d22",
+          "targetNodeId": "16845daa-97d7-4b32-b649-0accc59ad513",
+          "label": "revalidar"
+        },
+        {
+          "id": "a725dc9c-1455-4d5a-b5a6-47e58292b2fa",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "26ceac75-c0f7-4faa-ae0d-b01c949c6565",
+          "targetNodeId": "82aa5652-6c09-441e-8549-19022c15de66",
+          "label": "detalhar"
+        },
+        {
+          "id": "b3912564-569b-424a-b6ed-d40e816129cc",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "82aa5652-6c09-441e-8549-19022c15de66",
+          "targetNodeId": "7f6b26ad-348d-4e31-a564-8e8bc92a3bd5",
+          "label": ""
+        },
+        {
+          "id": "9320f136-9244-4ea9-8251-355981e0c923",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "7f6b26ad-348d-4e31-a564-8e8bc92a3bd5",
+          "targetNodeId": "1a5320a0-9a34-4063-ab52-c4aecbb46a06",
+          "label": ""
+        },
+        {
+          "id": "f725ff0b-2622-4b51-a743-ee57f72b441d",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "1a5320a0-9a34-4063-ab52-c4aecbb46a06",
+          "targetNodeId": "a8af3e06-bcb1-4433-aafd-f864f356de08",
+          "label": ""
+        },
+        {
+          "id": "c25cb217-7f18-4db0-8028-b50f61995b39",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "a8af3e06-bcb1-4433-aafd-f864f356de08",
+          "targetNodeId": "a6ddb3f5-2c00-421a-bfe9-fe7d6db42e6a",
+          "label": ""
+        },
+        {
+          "id": "56319a72-3ce1-4ace-a510-d713c9cf1aaf",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "a6ddb3f5-2c00-421a-bfe9-fe7d6db42e6a",
+          "targetNodeId": "2efb9259-bb0f-409a-b164-3fb3577cb75c",
+          "label": "pacote completo"
+        },
+        {
+          "id": "92dc19ca-da96-45f2-a54b-e834d2aa6b9c",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "575321da-3e25-4fc6-97cc-074f6edc1be4",
+          "targetNodeId": "25f2e9bc-c86c-44b0-abd8-04f5a99535e8",
+          "label": "validações"
+        },
+        {
+          "id": "1344a72d-132f-49de-88e7-e6275370f733",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "25f2e9bc-c86c-44b0-abd8-04f5a99535e8",
+          "targetNodeId": "34981576-e7bd-4671-a492-159d36f086c2",
+          "label": ""
+        },
+        {
+          "id": "5aac17d9-2c2b-4fe8-bfa1-1642d4829cf1",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "34981576-e7bd-4671-a492-159d36f086c2",
+          "targetNodeId": "2b07cbb0-cf5b-4ea1-851a-79d58c6263c5",
+          "label": ""
+        },
+        {
+          "id": "3fc31ed7-e92e-43dc-ad4b-a636bd89f7c8",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "2b07cbb0-cf5b-4ea1-851a-79d58c6263c5",
+          "targetNodeId": "5d6a845b-2eea-49a4-b8ad-34cb101ca841",
+          "label": ""
+        },
+        {
+          "id": "018facb4-9922-461b-bc8a-515d262fa132",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "5d6a845b-2eea-49a4-b8ad-34cb101ca841",
+          "targetNodeId": "aa5a591b-9e86-4c93-b3d2-eb7ea1f8baa1",
+          "label": ""
+        },
+        {
+          "id": "80beb47a-dbb0-415f-946c-463c0f73d00b",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "aa5a591b-9e86-4c93-b3d2-eb7ea1f8baa1",
+          "targetNodeId": "5acfcca6-d1be-41a4-8bb3-af0db5f2bc93",
+          "label": "resultado"
+        },
+        {
+          "id": "e21fecee-902e-4919-a05f-2596ae6013b9",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "5acfcca6-d1be-41a4-8bb3-af0db5f2bc93",
+          "targetNodeId": "4cf1bd27-9b52-408e-a670-109a49a91672",
+          "label": "não"
+        },
+        {
+          "id": "b7812b1d-68f0-429f-9d93-2ff1836e027c",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "4cf1bd27-9b52-408e-a670-109a49a91672",
+          "targetNodeId": "b5e6598e-8b4c-4f9b-9d62-cfa33baba325",
+          "label": ""
+        },
+        {
+          "id": "f497aed6-b883-45d3-ad5e-9b03303e8e66",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "b5e6598e-8b4c-4f9b-9d62-cfa33baba325",
+          "targetNodeId": "9dc9df8c-cdb9-48b0-a7c7-042e7bcb95c5",
+          "label": ""
+        },
+        {
+          "id": "dda70ab2-79dd-48da-a0be-f8d8b32b0fd1",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "9dc9df8c-cdb9-48b0-a7c7-042e7bcb95c5",
+          "targetNodeId": "575321da-3e25-4fc6-97cc-074f6edc1be4",
+          "label": "retestar"
+        },
+        {
+          "id": "5c087ed3-04aa-4f8f-9d78-e39ba4a3dae0",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "1c0d59f4-af0d-4de6-876b-bc6bd3d727ae",
+          "targetNodeId": "5ad19757-9cd0-4fc9-a6ec-180641d172ed",
+          "label": "sim"
+        },
+        {
+          "id": "4d102f2a-08f5-4ce4-baff-4c973405237e",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "5ad19757-9cd0-4fc9-a6ec-180641d172ed",
+          "targetNodeId": "5edbc199-e063-40df-80be-71bcb704570d",
+          "label": ""
+        },
+        {
+          "id": "ca33692c-cfa5-4f0a-8cf4-d8e809211392",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "5edbc199-e063-40df-80be-71bcb704570d",
+          "targetNodeId": "b2a573d9-5f01-440c-b942-b447393646da",
+          "label": "sim"
+        },
+        {
+          "id": "c568ad35-c2e0-4b08-983a-95fdf2bb4754",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "5edbc199-e063-40df-80be-71bcb704570d",
+          "targetNodeId": "a3f044be-23e4-4c6a-ad82-26aeaf7f5e0a",
+          "label": "não"
+        },
+        {
+          "id": "9d041a5d-88bc-4f35-803a-b803ee1dcc6f",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "a3f044be-23e4-4c6a-ad82-26aeaf7f5e0a",
+          "targetNodeId": "a53fa0f7-d224-4205-b089-655978782d69",
+          "label": ""
+        },
+        {
+          "id": "126149c8-d929-4ff8-89ee-9a9fb83bc226",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "b2a573d9-5f01-440c-b942-b447393646da",
+          "targetNodeId": "a53fa0f7-d224-4205-b089-655978782d69",
+          "label": "registrar decisão"
+        },
+        {
+          "id": "20637440-be8d-4cee-8d39-d8455ad8fbdb",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "a53fa0f7-d224-4205-b089-655978782d69",
+          "targetNodeId": "31173c0c-bb74-4ae1-8c03-d5bafbeeb4a8",
+          "label": "voltar revisado"
+        },
+        {
+          "id": "87a0b860-b277-4428-a8a3-ab222c2bf059",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "84d6c5d2-5d9f-4aea-9881-cd1bf7e50434",
+          "targetNodeId": "38809d41-bea7-42a1-9b69-01e9721cdd46",
+          "label": "não"
+        },
+        {
+          "id": "c2e57686-0547-449f-9b81-a3fd950a9fe1",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "38809d41-bea7-42a1-9b69-01e9721cdd46",
+          "targetNodeId": "4068d018-a4ae-41f5-8b7a-d6356438974b",
+          "label": ""
+        },
+        {
+          "id": "baf4e059-89a5-4d6d-a898-7ce438184f32",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "4068d018-a4ae-41f5-8b7a-d6356438974b",
+          "targetNodeId": "f3dd05fb-cdfc-47eb-91c3-6a23ddc99e91",
+          "label": "sim"
+        },
+        {
+          "id": "6c76dcaf-8849-4ae8-b4b9-838a6b690a4a",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "4068d018-a4ae-41f5-8b7a-d6356438974b",
+          "targetNodeId": "8f514a9d-87c7-474d-b5fa-3fd154adc1a7",
+          "label": "não / técnico"
+        },
+        {
+          "id": "8310738c-3139-4d51-b44c-ad8b37586ca9",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "f3dd05fb-cdfc-47eb-91c3-6a23ddc99e91",
+          "targetNodeId": "1933e58f-d1fb-4a47-8a70-bd2b0a567de3",
+          "label": "se envolver regra sensível"
+        },
+        {
+          "id": "d986611d-374e-4e3b-a92f-2330dfb93e0f",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "f3dd05fb-cdfc-47eb-91c3-6a23ddc99e91",
+          "targetNodeId": "31173c0c-bb74-4ae1-8c03-d5bafbeeb4a8",
+          "label": "validado"
+        },
+        {
+          "id": "03c22ed0-8fdf-41f6-9950-56bdb7b973a0",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "8f514a9d-87c7-474d-b5fa-3fd154adc1a7",
+          "targetNodeId": "575321da-3e25-4fc6-97cc-074f6edc1be4",
+          "label": "revalidar"
+        },
+        {
+          "id": "dfe58975-d73b-4ea3-8564-88649b92feb8",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "1933e58f-d1fb-4a47-8a70-bd2b0a567de3",
+          "targetNodeId": "16845daa-97d7-4b32-b649-0accc59ad513",
+          "label": "revalidar segurança"
+        },
+        {
+          "id": "fd7f8bde-2c97-44c8-abb3-3f684d4afecb",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "31b666fd-e2e9-49ce-9556-f068ad00c9d7",
+          "targetNodeId": "aa0ee854-b383-4201-b1ae-92d1ae242204",
+          "label": "não"
+        },
+        {
+          "id": "4ed04616-0742-4a50-b339-9c5cf01da680",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "aa0ee854-b383-4201-b1ae-92d1ae242204",
+          "targetNodeId": "21b0a0ae-a9a8-4913-8ec3-c8122e4734e1",
+          "label": ""
+        },
+        {
+          "id": "e54367d3-da41-4ae4-a032-6d63c44b1bab",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "21b0a0ae-a9a8-4913-8ec3-c8122e4734e1",
+          "targetNodeId": "2f5f2596-b0bc-4775-8a7a-643d289654f0",
+          "label": "reexecutar"
+        },
+        {
+          "id": "f12ea679-e9ec-4fea-b9a5-8f6570b7fbac",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "c8aacd2a-89db-4056-8512-93ee5a68d96f",
+          "targetNodeId": "2f070ec4-8ad6-4bb6-a1e8-52337c06887b",
+          "label": "preparar índice"
+        },
+        {
+          "id": "f4f4f683-bf60-4f79-8f1d-454b6b270ddb",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "2f070ec4-8ad6-4bb6-a1e8-52337c06887b",
+          "targetNodeId": "146950ed-eb6f-4cfb-a53f-5a1806dee847",
+          "label": ""
+        },
+        {
+          "id": "66cfee07-88e3-44ab-a399-e46d900f6501",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "146950ed-eb6f-4cfb-a53f-5a1806dee847",
+          "targetNodeId": "95411601-6a37-481f-8f0c-f92de8b6439a",
+          "label": ""
+        },
+        {
+          "id": "bc034970-268c-427b-9fe2-573adc1dd14f",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "95411601-6a37-481f-8f0c-f92de8b6439a",
+          "targetNodeId": "bc3bdcb8-0ed2-4222-a70b-275fbc2fefe5",
+          "label": ""
+        },
+        {
+          "id": "7c6aa002-f419-4979-a209-4bbde5afb5de",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "bc3bdcb8-0ed2-4222-a70b-275fbc2fefe5",
+          "targetNodeId": "436987d3-63ca-48f3-bb95-69bdc73997f2",
+          "label": "índice auditado"
+        },
+        {
+          "id": "0ba7af95-9b62-4c43-95db-20af6c17cd93",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "436987d3-63ca-48f3-bb95-69bdc73997f2",
+          "targetNodeId": "a3a28282-898a-4a58-b825-ff016830ab55",
+          "label": "usar base"
+        },
+        {
+          "id": "de477dcb-0e2e-4f83-9ed9-f3feb5d42c7b",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "a3a28282-898a-4a58-b825-ff016830ab55",
+          "targetNodeId": "736a1977-baa9-4b06-9041-8d9136a22e83",
+          "label": "comparar"
+        },
+        {
+          "id": "8815f26f-6e8c-425b-a4be-c8d16d24699d",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "736a1977-baa9-4b06-9041-8d9136a22e83",
+          "targetNodeId": "f0da93ad-b331-4bf0-9162-088a838c9843",
+          "label": "não"
+        },
+        {
+          "id": "fc5cf3b8-5433-43d6-aa4e-8e1f080334fb",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "f0da93ad-b331-4bf0-9162-088a838c9843",
+          "targetNodeId": "59f67578-780c-4656-954a-aa5903d5447e",
+          "label": ""
+        },
+        {
+          "id": "256ca232-ba79-4926-8586-695195e3f188",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "59f67578-780c-4656-954a-aa5903d5447e",
+          "targetNodeId": "dc181cbe-629d-4a12-83eb-896df9d023a6",
+          "label": ""
+        },
+        {
+          "id": "7795d996-9606-4e10-a00d-da68c0af759d",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "dc181cbe-629d-4a12-83eb-896df9d023a6",
+          "targetNodeId": "26ceac75-c0f7-4faa-ae0d-b01c949c6565",
+          "label": "corrigir fonte"
+        },
+        {
+          "id": "5c50bba1-1e4c-4f2e-bc02-58ffb8a82d84",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "46042da0-5eb4-4d40-9b1c-089f8e560ad2",
+          "targetNodeId": "8d549887-e821-44fb-b41a-2d90c4810182",
+          "label": "uso real"
+        },
+        {
+          "id": "9db6a042-971c-4830-af00-9f4fff500c8b",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "8d549887-e821-44fb-b41a-2d90c4810182",
+          "targetNodeId": "f417108f-99bb-4b3f-8feb-e1d165ebcb52",
+          "label": ""
+        },
+        {
+          "id": "766b9496-c806-4bc8-9c1c-377fcd10ca0e",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "f417108f-99bb-4b3f-8feb-e1d165ebcb52",
+          "targetNodeId": "dfc917e7-6e08-4d44-a6e1-c45c94509777",
+          "label": ""
+        },
+        {
+          "id": "66411b29-53d1-43d0-bf1e-57e404fb43f2",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "dfc917e7-6e08-4d44-a6e1-c45c94509777",
+          "targetNodeId": "5ad14cf4-896d-45dc-8334-50ef0bac3797",
+          "label": ""
+        },
+        {
+          "id": "b9ba35bc-109c-4e55-89ad-b2b87eb7d0e5",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "5ad14cf4-896d-45dc-8334-50ef0bac3797",
+          "targetNodeId": "4445a24a-2ba5-455a-978e-ce68bbc6e016",
+          "label": "retroalimentar"
+        },
+        {
+          "id": "c179ca32-227d-4430-b1ce-9adc514fe940",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "5ad14cf4-896d-45dc-8334-50ef0bac3797",
+          "targetNodeId": "2b312be7-5c03-4332-9949-a5fe9a26e364",
+          "label": "se faltou algo"
+        },
+        {
+          "id": "7b3fde32-bf74-4a50-9508-7b5b12072775",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "2b312be7-5c03-4332-9949-a5fe9a26e364",
+          "targetNodeId": "eb0f13c5-f5e5-49f1-94db-7d63ce6db802",
+          "label": ""
+        },
+        {
+          "id": "0bdb8626-ed53-45a6-9ea3-7fb88fee38f7",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "eb0f13c5-f5e5-49f1-94db-7d63ce6db802",
+          "targetNodeId": "4445a24a-2ba5-455a-978e-ce68bbc6e016",
+          "label": "adoção"
+        },
+        {
+          "id": "f88a0ebb-70bd-4261-bfca-60fc1acb8cd2",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "e769d050-257c-4733-a22e-0fcd9c8a3fac",
+          "targetNodeId": "4980f903-9ec5-4bd2-a334-4dcce315850a",
+          "label": "agenda"
+        },
+        {
+          "id": "708c04fa-df8c-4546-b645-02ba8259fb2a",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "4980f903-9ec5-4bd2-a334-4dcce315850a",
+          "targetNodeId": "32c06e91-cbfc-4bbf-be33-c52554894f52",
+          "label": ""
+        },
+        {
+          "id": "6276ba34-4c7d-460c-8266-8c7463a51b11",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "32c06e91-cbfc-4bbf-be33-c52554894f52",
+          "targetNodeId": "f89a0c1e-8ea5-4d98-a4a8-4d7d91a9f659",
+          "label": ""
+        },
+        {
+          "id": "efcc3934-918b-4fea-b770-4b940d46378a",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "f89a0c1e-8ea5-4d98-a4a8-4d7d91a9f659",
+          "targetNodeId": "9b9eadf3-b807-442c-9ccc-a8cac4c5f9d4",
+          "label": "sim"
+        },
+        {
+          "id": "ad19c2be-e967-426b-9f8b-eb335284550e",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "f89a0c1e-8ea5-4d98-a4a8-4d7d91a9f659",
+          "targetNodeId": "c7ffa341-25ce-4eda-b7fd-440631e09cd4",
+          "label": "não, doc antiga"
+        },
+        {
+          "id": "b29f18cc-1d95-4096-a3b8-cfe0bdda8b53",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "9b9eadf3-b807-442c-9ccc-a8cac4c5f9d4",
+          "targetNodeId": "e78cbbf7-8bf2-418b-8883-3d6c4e8354d0",
+          "label": "novo ciclo"
+        },
+        {
+          "id": "f46e64de-9c90-49f0-8801-53685312188f",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "c7ffa341-25ce-4eda-b7fd-440631e09cd4",
+          "targetNodeId": "c8aacd2a-89db-4056-8512-93ee5a68d96f",
+          "label": "reindexar"
+        },
+        {
+          "id": "a681d3d2-e86d-4762-8caa-d882336c3fd8",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "e769d050-257c-4733-a22e-0fcd9c8a3fac",
+          "targetNodeId": "ff72b01b-c9d2-4f66-b88b-c190f5575ecf",
+          "label": "medir"
+        },
+        {
+          "id": "b3c993c4-3667-4899-842a-f3c47977f390",
+          "type": "directed_solid",
+          "line_style": "solid",
+          "sourceNodeId": "ff72b01b-c9d2-4f66-b88b-c190f5575ecf",
+          "targetNodeId": "d23aae80-1c6b-491b-aa44-10cb0baf8373",
+          "label": ""
+        },
+        {
+          "id": "f106f138-5570-4e67-a9e6-d83777d98e5c",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "d23aae80-1c6b-491b-aa44-10cb0baf8373",
+          "targetNodeId": "6e470a42-a4c5-4002-b5fa-9ee459237d29",
+          "label": "ajustar padrão"
+        },
+        {
+          "id": "8195959d-e609-460a-ba09-0427feac2e40",
+          "type": "directed_dashed",
+          "line_style": "dashed",
+          "sourceNodeId": "4445a24a-2ba5-455a-978e-ce68bbc6e016",
+          "targetNodeId": "2b312be7-5c03-4332-9949-a5fe9a26e364",
+          "label": "gaps de uso"
+        }
+      ]
+    }
+  ]
+}

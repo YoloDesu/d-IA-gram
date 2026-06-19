@@ -13,10 +13,11 @@ import { ProjectApiService } from '../../core/api/project-api';
 import { DiagramApiService } from '../../core/api/diagram-api';
 import { LlmExportService } from '../../core/export/llm-export.service';
 import { ExportedDiagram } from '../../core/export/llm-format.types';
+import { downloadBlob } from '../../shared/file-download';
 import { Diagram } from '../../shared/models/diagram.model';
 import { DiagramNode, NodeType } from '../../shared/models/node.model';
 import { DiagramEdge } from '../../shared/models/edge.model';
-import { DiagramSnapshot, SelectedCellInfo } from '../../core/graph/graph-events';
+import { DiagramSnapshot, EditorTool, SelectedCellInfo } from '../../core/graph/graph-events';
 
 /**
  * Editor shell: diagram list (left) + canvas (center) + properties panel (right),
@@ -50,6 +51,7 @@ export class Editor implements OnInit {
   protected readonly exportJson = signal('');
   protected readonly showExport = signal(false);
   protected readonly showImport = signal(false);
+  protected readonly selectedTool = signal<EditorTool>('select');
 
   constructor() {
     this.saveQueue.pipe(
@@ -89,6 +91,32 @@ export class Editor implements OnInit {
     this.adapter.deleteSelection();
   }
 
+  protected onClearDiagram(): void {
+    if (this.selectedDiagramId())
+      this.adapter.clearDiagram();
+  }
+
+  protected onToolSelected(tool: EditorTool): void {
+    this.selectedTool.set(tool);
+    if (this.selectedDiagramId())
+      this.adapter.setInteractionMode(tool);
+  }
+
+  protected onZoomIn(): void {
+    if (this.selectedDiagramId())
+      this.adapter.zoomIn();
+  }
+
+  protected onZoomOut(): void {
+    if (this.selectedDiagramId())
+      this.adapter.zoomOut();
+  }
+
+  protected onResetZoom(): void {
+    if (this.selectedDiagramId())
+      this.adapter.resetZoom();
+  }
+
   protected onLabelChanged(label: string): void {
     this.adapter.updateSelectedLabel(label);
   }
@@ -106,9 +134,8 @@ export class Editor implements OnInit {
     const id = this.selectedDiagramId();
     if (!id)
       return;
-    const name = this.diagrams().find(d => d.id === id)?.name ?? 'Diagrama';
     const snapshot = this.adapter.snapshot();
-    const payload = this.exporter.buildFromCurrent(id, name, snapshot.nodes, snapshot.edges);
+    const payload = this.exporter.buildFromCurrent(id, this.currentDiagramName(), snapshot.nodes, snapshot.edges);
     this.exportJson.set(this.exporter.serialize(payload));
     this.showExport.set(true);
   }
@@ -117,16 +144,25 @@ export class Editor implements OnInit {
     this.showImport.set(true);
   }
 
+  /** Exports the current canvas to a high-resolution PNG and downloads it. */
+  protected async onExportPng(): Promise<void> {
+    if (!this.selectedDiagramId())
+      return;
+    const blob = await this.adapter.exportPng();
+    downloadBlob(blob, `${this.currentDiagramName()}.png`);
+  }
+
   /** Replaces the current diagram's content with the first imported diagram, then saves. */
   protected onImported(diagrams: ExportedDiagram[]): void {
     this.showImport.set(false);
     const first = diagrams[0];
     if (!this.selectedDiagramId() || !first)
       return;
-    this.nodes.set([...first.nodes]);
-    this.edges.set([...first.edges]);
+    const arranged = this.adapter.renderHierarchicalDiagram(first.nodes, first.edges);
+    this.nodes.set([...arranged.nodes]);
+    this.edges.set([...arranged.edges]);
     this.saving.set(true);
-    this.saveQueue.next({ nodes: [...first.nodes], edges: [...first.edges] });
+    this.saveQueue.next({ nodes: [...arranged.nodes], edges: [...arranged.edges] });
   }
 
   protected goBack(): void {
@@ -149,13 +185,15 @@ export class Editor implements OnInit {
   }
 
   private persist(snapshot: DiagramSnapshot) {
-    const diagramId = this.selectedDiagramId();
-    const diagram = this.diagrams().find(d => d.id === diagramId);
-    const name = diagram?.name ?? 'Diagrama';
-    return this.diagramApi.save(this.projectId(), diagramId!, {
-      name,
+    return this.diagramApi.save(this.projectId(), this.selectedDiagramId()!, {
+      name: this.currentDiagramName(),
       nodes: snapshot.nodes,
       edges: snapshot.edges
     });
+  }
+
+  private currentDiagramName(): string {
+    const id = this.selectedDiagramId();
+    return this.diagrams().find(d => d.id === id)?.name ?? 'Diagrama';
   }
 }

@@ -41,6 +41,26 @@ public class LlmExportBuilderTests
     }
 
     [Fact]
+    public void BuildDiagramExport_includes_layout_hints()
+    {
+        var export = new LlmExportBuilder().BuildDiagramExport(SampleDiagram());
+
+        Assert.Equal("top-to-bottom", export.Capabilities.LayoutHints.FlowDirection);
+        Assert.Equal(160, export.Capabilities.LayoutHints.Spacing.Vertical);
+        Assert.Equal(340, export.Capabilities.LayoutHints.Spacing.Horizontal);
+    }
+
+    [Fact]
+    public void BuildDiagramExport_instructs_llm_to_avoid_overlaps()
+    {
+        var export = new LlmExportBuilder().BuildDiagramExport(SampleDiagram());
+
+        Assert.Contains("nenhum nó se sobrepõe", export.InstructionsForLlm);
+        Assert.Contains("margem mínima de 40px", export.Capabilities.LayoutHints.MainFlow);
+        Assert.Contains("arestas atravessem caixas", export.Capabilities.LayoutHints.Branching);
+    }
+
+    [Fact]
     public void BuildDiagramExport_carries_the_diagram_nodes()
     {
         var export = new LlmExportBuilder().BuildDiagramExport(SampleDiagram());

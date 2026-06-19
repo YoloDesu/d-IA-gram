@@ -6,9 +6,16 @@
       <app-toolbar
         [saving]="saving()"
         [canDelete]="selectedCell() !== null"
+        [selectedTool]="selectedTool()"
         (addNode)="onAddNode($event)"
         (deleteSelected)="onDeleteSelected()"
+        (clearDiagram)="onClearDiagram()"
+        (toolSelected)="onToolSelected($event)"
+        (zoomInRequested)="onZoomIn()"
+        (zoomOutRequested)="onZoomOut()"
+        (resetZoomRequested)="onResetZoom()"
         (exportRequested)="onExport()"
+        (exportPngRequested)="onExportPng()"
         (importRequested)="onImport()" />
     </div>
   </header>

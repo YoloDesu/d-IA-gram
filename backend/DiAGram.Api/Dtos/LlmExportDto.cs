@@ -21,7 +21,17 @@ public record CapabilitiesDto(
     [property: JsonPropertyName("edge_types")] IReadOnlyList<EdgeTypeCapabilityDto> EdgeTypes,
     [property: JsonPropertyName("supported_operations")] IReadOnlyList<string> SupportedOperations,
     [property: JsonPropertyName("position_system")] PositionSystemDto PositionSystem,
+    [property: JsonPropertyName("layout_hints")] LayoutHintsDto LayoutHints,
     [property: JsonPropertyName("size_defaults")] IReadOnlyDictionary<string, SizeDefaultDto> SizeDefaults);
+
+public record LayoutHintsDto(
+    [property: JsonPropertyName("flow_direction")] string FlowDirection,
+    [property: JsonPropertyName("main_flow")] string MainFlow,
+    string Branching,
+    string Columns,
+    LayoutSpacingDto Spacing);
+
+public record LayoutSpacingDto(int Vertical, int Horizontal);
 
 public record NodeTypeCapabilityDto(string Type, string Shape, string Description);
 

@@ -12,7 +12,9 @@ public class LlmImportValidatorTests
         => new(schema, "1.0.0", "i", Capabilities(), [diagram]);
 
     private static CapabilitiesDto Capabilities()
-        => new([], [], [], new PositionSystemDto("px", "top-left", 120), new Dictionary<string, SizeDefaultDto>());
+        => new([], [], [], new PositionSystemDto("px", "top-left", 120),
+            new LayoutHintsDto("top-to-bottom", "", "", "", new LayoutSpacingDto(120, 300)),
+            new Dictionary<string, SizeDefaultDto>());
 
     [Fact]
     public void Valid_payload_has_no_errors()

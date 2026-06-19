@@ -5,7 +5,7 @@
 
 ## Estado atual
 
-**Última atualização:** TODAS AS 8 FASES COMPLETAS ✅ — MVP funcional
+**Última atualização:** MVP funcional + melhorias de canvas/layout LLM ✅
 **Fase atual:** — (concluído; só falta verificação VISUAL no browser)
 
 ## Ambiente detectado
@@ -39,9 +39,24 @@ Arquivos gerados SEM sufixo `.component`: `app.ts` (classe `App`), `app.config.t
   - **Bug corrigido**: enums serializavam PascalCase ("Terminal") → agora camelCase ("terminal") via `Serialization/CamelCaseEnumConverter.cs` (atributo `[JsonConverter]` nas enums). Teste de regressão em ExportEndpointTests.
   - **E2E HTTP do diferencial PROVADO**: export → modificação simulada de LLM (add nó decision + aresta dashed) → import → persistência confirmada; import inválido → 400.
 
-## ✅ STATUS FINAL: MVP COMPLETO
+## Pós-MVP (melhorias)
 
-- **Testes**: 30 backend + 36 frontend = 66 testes, todos verdes.
+### layout_hints no export (reduz verticalidade gerada por LLMs)
+LLMs tendiam a empilhar tudo numa coluna vertical (não é bug; o app não tem auto-layout e renderiza as coords literais). Adicionado bloco `capabilities.layout_hints` ao formato de export, orientando: fluxo top-to-bottom em coluna central, ramos de `decision` espalhados lateralmente (±340px), 3-5 colunas, espaçamento vertical 160px, margem mínima 40px e validação explícita para não sobrepor nós nem atravessar caixas com arestas. Frontend: `llm-format.types.ts` (interface `LayoutHints`) + `llm-capabilities.ts`. Backend: `LayoutHintsDto`/`LayoutSpacingDto` em `LlmExportDto.cs` + `LlmExportBuilder`. Ambos espelhados.
+
+### Export PNG de alta resolução
+`MaxGraphAdapterService.exportPng(scale=3, padding=16)`: pega o `<svg>` do `graph.container`, usa `graph.getGraphBounds()` p/ recortar no conteúdo, clona o SVG ajustando width/height/viewBox (× scale), serializa e rasteriza num canvas branco → `Blob` PNG (função livre `rasterizeSvg`). SVG é vetorial → nitidez independente do zoom de tela. Util `shared/file-download.ts` (`downloadBlob`). Botão "Exportar PNG" no Toolbar (output `exportPngRequested`) → `Editor.onExportPng` baixa `{nome}.png`.
+**Não testado em jsdom** (canvas.toBlob/Image-SVG não suportados) — verificar visualmente no browser.
+
+### Auto-layout hierárquico no import LLM
+Corrigido problema de diagramas importados com caixas sobrepostas / setas muito cruzadas. Durante `onImported`, o Editor agora chama `MaxGraphAdapterService.renderHierarchicalDiagram`, que renderiza o JSON importado, executa `HierarchicalLayout` top-to-bottom do maxGraph e salva o snapshot reorganizado. `LlmImportService` também aumenta `size` de nós com labels longos/multilinha para evitar texto espremido. `buildEdgeStyle` usa `EdgeStyle.SegmentConnector` + `orthogonal: true`, e `edge-router.ts` calcula waypoints quando a linha direta atravessaria uma caixa, desviando por fora da fileira/coluna. Regressões: `llm-import.service.spec.ts`, `maxgraph-adapter.spec.ts`, `node-style.factory.spec.ts`, `edge-router.spec.ts`.
+
+### Controles de canvas
+Toolbar tem ferramenta `Selecionar`, ferramenta `Mover tela`, `Limpar tela`, zoom out, reset 100% e zoom in. `MaxGraphAdapterService` inicializa maxGraph com `RubberBandHandler`; no modo seleção a área de seleção fica ativa, e no modo pan o `PanningHandler` usa botão esquerdo, desliga seleção/movimento/conexão e aplica cursor `grab`. Regressões em `maxgraph-adapter.spec.ts`.
+
+## ✅ STATUS FINAL: MVP COMPLETO + melhorias
+
+- **Testes**: 32 backend + 48 frontend = 80 testes, todos verdes.
 - **Builds**: backend `dotnet build` OK; frontend `ng build --configuration production` OK.
 - **E2E**: round-trip export/import validado via HTTP real (Python urllib). CRUD validado via curl. Swagger 200. `ng serve` serve SPA (HTTP 200).
 - **README.md** criado; CLAUDE.md atualizado com comandos de teste.
@@ -62,7 +77,7 @@ provado por testes. Rodar: backend `dotnet run` (porta 5294) + `ng serve`.
 
 ```bash
 # Frontend
-cd frontend && ng test --watch=false
+cd frontend && NG_DISABLE_VERSION_CHECK=1 npx ng test --watch=false
 ng serve
 
 # Backend
@@ -115,7 +130,7 @@ dotnet run --project DiAGram.Api
 
 ## Canvas / maxGraph (Fase 5)
 
-- **API maxGraph 0.23 usada**: `new Graph(container)` (registra default shapes automaticamente via `registerDefaults`); `setPanning(true)`, `setConnectable(true)`; `insertVertex({parent,id,value,position:[x,y],size:[w,h],style})`, `insertEdge({...,source,target})`; `batchUpdate(fn)`; `getChildVertices/getChildEdges(parent)`; `removeCells`; `getSelectionCell(s)`; eventos via `getDataModel().addListener(InternalEvent.CHANGE)` e `getSelectionModel().addListener(InternalEvent.CHANGE)`; `getStylesheet().putDefaultEdgeStyle(...)`.
+- **API maxGraph 0.23 usada**: `new Graph(container, undefined, [...getDefaultPlugins(), RubberBandHandler])`; `setPanning`, `setConnectable`, `setCellsSelectable`, `setCellsMovable`; `insertVertex({parent,id,value,position:[x,y],size:[w,h],style})`, `insertEdge({...,source,target})`; `batchUpdate(fn)`; `getChildVertices/getChildEdges(parent)`; `removeCells`; `getSelectionCell(s)`; `zoomIn/zoomOut/zoomActual`; eventos via `getDataModel().addListener(InternalEvent.CHANGE)` e `getSelectionModel().addListener(InternalEvent.CHANGE)`; `getStylesheet().putDefaultEdgeStyle(...)`.
 - **Estilos são OBJETOS `CellStyle`** (não strings como no mxGraph antigo).
 - **`parallelogram` NÃO é built-in** → `core/graph/parallelogram-shape.ts` registra shape custom (extends `Shape`, override `paintVertexShape`) via `ShapeRegistry.add`. io→parallelogram, process→rectangle, decision→rhombus, terminal→rectangle+rounded.
 - **Tipo do nó inferido do `style.shape`** (não há mapa paralelo) — ver `graph-cell-mapper.ts`.
@@ -131,7 +146,7 @@ Round-trip provado no nível de modelo (teste jsdom). Renderização visual real
 
 - `features/editor/`:
   - `editor.ts` (`Editor`) — orquestra tudo. Provê `MaxGraphAdapterService`. Carrega projeto+diagramas no `ngOnInit`, seleciona o 1º. Auto-save via `Subject<DiagramSnapshot>` + `debounceTime(600)` + `switchMap(persist)`. `onAddNode/onDeleteSelected/onLabelChanged` delegam ao adapter.
-  - `toolbar/` (`Toolbar`) — apresentacional; outputs addNode, deleteSelected, exportRequested, importRequested.
+  - `toolbar/` (`Toolbar`) — apresentacional; outputs addNode, deleteSelected, clearDiagram, toolSelected, zoomInRequested, zoomOutRequested, resetZoomRequested, exportRequested, importRequested.
   - `diagram-list/` (`DiagramList`) — sidebar esq; outputs selectDiagram, createDiagram.
   - `properties-panel/` (`PropertiesPanel`) — sidebar dir; edita rótulo da célula selecionada; output labelChanged.
 - **Contrato de estado**: `nodes`/`edges` signals só são reatribuídos em `openDiagram` (load/troca de diagrama) — NUNCA no auto-save, evitando loop de re-render.

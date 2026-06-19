@@ -1,4 +1,4 @@
-import { CellStyle } from '@maxgraph/core';
+import { CellStyle, EdgeStyle } from '@maxgraph/core';
 import { NodeType } from '../../shared/models/node.model';
 import { EdgeLineStyle } from '../../shared/models/edge.model';
 import { PARALLELOGRAM_SHAPE } from './parallelogram-shape';
@@ -39,9 +39,11 @@ export function buildNodeStyle(type: NodeType): CellStyle {
 /** Builds the maxGraph cell style for a directed edge. */
 export function buildEdgeStyle(lineStyle: EdgeLineStyle): CellStyle {
   return {
+    edgeStyle: EdgeStyle.SegmentConnector,
     endArrow: 'classic',
     strokeColor: '#475569',
     dashed: lineStyle === 'dashed',
+    orthogonal: true,
     rounded: true
   };
 }

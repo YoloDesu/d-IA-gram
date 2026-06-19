@@ -37,8 +37,8 @@ O CORS do backend libera `http://localhost:4200`.
 ## Testes
 
 ```bash
-cd backend  && dotnet test                                   # 30 testes
-cd frontend && NG_DISABLE_VERSION_CHECK=1 npx ng test --watch=false   # 36 testes
+cd backend  && dotnet test                                   # 32 testes
+cd frontend && NG_DISABLE_VERSION_CHECK=1 npx ng test --watch=false   # 48 testes
 ```
 
 ## Tipos de elementos

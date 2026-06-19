@@ -17,6 +17,14 @@ export interface EdgeTypeCapability {
   readonly description: string;
 }
 
+export interface LayoutHints {
+  readonly flow_direction: string;
+  readonly main_flow: string;
+  readonly branching: string;
+  readonly columns: string;
+  readonly spacing: { readonly vertical: number; readonly horizontal: number };
+}
+
 export interface Capabilities {
   readonly node_types: readonly NodeTypeCapability[];
   readonly edge_types: readonly EdgeTypeCapability[];
@@ -26,6 +34,7 @@ export interface Capabilities {
     readonly origin: string;
     readonly recommended_spacing: number;
   };
+  readonly layout_hints: LayoutHints;
   readonly size_defaults: Record<NodeType, { readonly width: number; readonly height: number }>;
 }
 

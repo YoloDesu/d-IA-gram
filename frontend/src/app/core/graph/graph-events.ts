@@ -14,6 +14,9 @@ export interface SelectedCellInfo {
   readonly label: string;
 }
 
+/** Canvas interaction mode selected from the editor toolbar. */
+export type EditorTool = 'select' | 'pan';
+
 /** Default pixel size used when the user inserts a new node of each type. */
 export const DEFAULT_NODE_SIZE: Record<NodeType, { width: number; height: number }> = {
   process: { width: 160, height: 60 },

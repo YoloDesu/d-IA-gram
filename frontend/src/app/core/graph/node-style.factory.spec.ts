@@ -33,4 +33,10 @@ describe('buildEdgeStyle', () => {
   it('always uses a classic end arrow', () => {
     expect(buildEdgeStyle('solid').endArrow).toBe('classic');
   });
+
+  it('routes edges orthogonally for cleaner imported flowcharts', () => {
+    const style = buildEdgeStyle('solid');
+    expect(style.edgeStyle).toBeDefined();
+    expect(style.orthogonal).toBe(true);
+  });
 });

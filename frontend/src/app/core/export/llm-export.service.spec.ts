@@ -20,6 +20,21 @@ describe('LlmExportService', () => {
     expect(payload.capabilities.node_types).toHaveLength(4);
   });
 
+  it('includes layout hints so the LLM spreads branches horizontally', () => {
+    const hints = service.buildFromCurrent('d1', 'Flow', nodes, []).capabilities.layout_hints;
+    expect(hints.flow_direction).toBe('top-to-bottom');
+    expect(hints.spacing.horizontal).toBe(340);
+    expect(hints.branching.length).toBeGreaterThan(0);
+  });
+
+  it('instructs the LLM to avoid node overlaps and edges through boxes', () => {
+    const payload = service.buildFromCurrent('d1', 'Flow', nodes, []);
+
+    expect(payload.instructions_for_llm).toContain('nenhum nó se sobrepõe');
+    expect(payload.capabilities.layout_hints.main_flow).toContain('margem mínima de 40px');
+    expect(payload.capabilities.layout_hints.branching).toContain('arestas atravessem caixas');
+  });
+
   it('embeds the diagram nodes', () => {
     const payload = service.buildFromCurrent('d1', 'Flow', nodes, []);
     expect(payload.diagrams[0].nodes[0].label).toBe('Início');

@@ -66,4 +66,16 @@ describe('LlmImportService', () => {
     if (result.ok)
       expect(result.value[0].nodes[0].size).toEqual({ width: 140, height: 50 });
   });
+
+  it('expands imported nodes so long LLM labels do not overlap the box', () => {
+    const payload = JSON.parse(validJson());
+    payload.diagrams[0].nodes[0].label = 'Validar requisitos, riscos, integrações e critérios de aceite';
+    payload.diagrams[0].nodes[0].size = { width: 80, height: 30 };
+    const result = importer.parse(JSON.stringify(payload));
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value[0].nodes[0].size.width).toBeGreaterThan(80);
+      expect(result.value[0].nodes[0].size.height).toBeGreaterThan(30);
+    }
+  });
 });

@@ -1,5 +1,14 @@
 import { Injectable } from '@angular/core';
-import { Cell, Graph, InternalEvent } from '@maxgraph/core';
+import {
+  Cell,
+  getDefaultPlugins,
+  Graph,
+  HierarchicalLayout,
+  InternalEvent,
+  PanningHandler,
+  Point,
+  RubberBandHandler
+} from '@maxgraph/core';
 import { Observable, Subject } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { DiagramNode, NodeType } from '../../shared/models/node.model';
@@ -7,7 +16,8 @@ import { DiagramEdge } from '../../shared/models/edge.model';
 import { buildEdgeStyle, buildNodeStyle } from './node-style.factory';
 import { registerParallelogramShape } from './parallelogram-shape';
 import { cellToEdge, cellToNode } from './graph-cell-mapper';
-import { DEFAULT_NODE_SIZE, DiagramSnapshot, SelectedCellInfo } from './graph-events';
+import { buildEdgeWaypoints } from './edge-router';
+import { DEFAULT_NODE_SIZE, DiagramSnapshot, EditorTool, SelectedCellInfo } from './graph-events';
 
 /**
  * Thin interface owning maxGraph. The rest of the app only sees DiagramNode/DiagramEdge
@@ -34,23 +44,56 @@ export class MaxGraphAdapterService {
 
   initializeGraph(container: HTMLElement): void {
     registerParallelogramShape();
-    this.graph = new Graph(container);
-    this.graph.setPanning(true);
-    this.graph.setConnectable(true);
+    this.graph = new Graph(container, undefined, [...getDefaultPlugins(), RubberBandHandler]);
     this.graph.getStylesheet().putDefaultEdgeStyle(buildEdgeStyle('solid'));
+    this.setInteractionMode('select');
     this.attachListeners(this.graph);
+  }
+
+  /** Switches between selection/area-selection and left-button canvas panning. */
+  setInteractionMode(mode: EditorTool): void {
+    const graph = this.require();
+    const panMode = mode === 'pan';
+    graph.setPanning(panMode);
+    graph.setConnectable(!panMode);
+    graph.setCellsSelectable(!panMode);
+    graph.setCellsMovable(!panMode);
+    graph.getPlugin<RubberBandHandler>('RubberBandHandler')?.setEnabled(!panMode);
+    configureLeftButtonPanning(graph, panMode);
+    graph.container.classList.toggle('is-pan-mode', panMode);
+    graph.container.classList.toggle('is-select-mode', !panMode);
+    if (panMode)
+      graph.clearSelection();
   }
 
   /** Replaces all cells with the given diagram. Does not emit a change event. */
   renderDiagram(nodes: readonly DiagramNode[], edges: readonly DiagramEdge[]): void {
     const graph = this.require();
     this.isRendering = true;
-    graph.batchUpdate(() => {
-      graph.removeCells(graph.getChildCells(graph.getDefaultParent(), true, true));
-      const cellsById = this.insertNodes(graph, nodes);
-      this.insertEdges(graph, edges, cellsById);
-    });
-    this.isRendering = false;
+    try {
+      graph.batchUpdate(() => {
+        this.replaceDiagramCells(graph, nodes, edges);
+        this.routeEdgesAroundNodes(graph);
+      });
+    } finally {
+      this.isRendering = false;
+    }
+  }
+
+  /** Renders an imported diagram, applies a top-to-bottom hierarchy, and returns the new state. */
+  renderHierarchicalDiagram(nodes: readonly DiagramNode[], edges: readonly DiagramEdge[]): DiagramSnapshot {
+    const graph = this.require();
+    this.isRendering = true;
+    try {
+      graph.batchUpdate(() => {
+        this.replaceDiagramCells(graph, nodes, edges);
+        buildImportedHierarchyLayout(graph).execute(graph.getDefaultParent());
+        this.routeEdgesAroundNodes(graph);
+      });
+    } finally {
+      this.isRendering = false;
+    }
+    return this.snapshot();
   }
 
   /** Inserts a new node of the given type at a cascading position. Emits a change. */
@@ -95,6 +138,47 @@ export class MaxGraphAdapterService {
     graph.removeCells(graph.getSelectionCells());
   }
 
+  /** Removes every node and edge from the current diagram. */
+  clearDiagram(): void {
+    const graph = this.require();
+    graph.removeCells(graph.getChildCells(graph.getDefaultParent(), true, true));
+  }
+
+  /** Zooms into the canvas. */
+  zoomIn(): void {
+    this.require().zoomIn();
+  }
+
+  /** Zooms out of the canvas. */
+  zoomOut(): void {
+    this.require().zoomOut();
+  }
+
+  /** Restores the canvas to 100% zoom. */
+  resetZoom(): void {
+    this.require().zoomActual();
+  }
+
+  /**
+   * Renders the current diagram to a high-resolution PNG. The SVG is vector, so rasterizing
+   * at `scale`× the content bounds yields a crisp image regardless of the on-screen zoom.
+   */
+  async exportPng(scale = 3, padding = 16): Promise<Blob> {
+    const graph = this.require();
+    const svg = graph.container.querySelector('svg');
+    if (!svg)
+      throw new Error('MaxGraphAdapterService: SVG do grafo não encontrado para exportar PNG.');
+    const bounds = graph.getGraphBounds();
+    const width = Math.max(1, Math.ceil(bounds.width) + padding * 2);
+    const height = Math.max(1, Math.ceil(bounds.height) + padding * 2);
+    const clone = svg.cloneNode(true) as SVGSVGElement;
+    clone.setAttribute('width', String(width * scale));
+    clone.setAttribute('height', String(height * scale));
+    clone.setAttribute('viewBox', `${bounds.x - padding} ${bounds.y - padding} ${width} ${height}`);
+    const xml = new XMLSerializer().serializeToString(clone);
+    return rasterizeSvg(`data:image/svg+xml;charset=utf-8,${encodeURIComponent(xml)}`, width * scale, height * scale);
+  }
+
   destroyGraph(): void {
     this.graph?.destroy();
     this.graph = null;
@@ -118,6 +202,12 @@ export class MaxGraphAdapterService {
     return cellsById;
   }
 
+  private replaceDiagramCells(graph: Graph, nodes: readonly DiagramNode[], edges: readonly DiagramEdge[]): void {
+    graph.removeCells(graph.getChildCells(graph.getDefaultParent(), true, true));
+    const cellsById = this.insertNodes(graph, nodes);
+    this.insertEdges(graph, edges, cellsById);
+  }
+
   private insertEdges(
     graph: Graph,
     edges: readonly DiagramEdge[],
@@ -137,6 +227,24 @@ export class MaxGraphAdapterService {
         style: buildEdgeStyle(edge.lineStyle)
       });
     }
+  }
+
+  private routeEdgesAroundNodes(graph: Graph): void {
+    const parent = graph.getDefaultParent();
+    const nodes = graph.getChildVertices(parent).map(cellToNode).filter((node): node is DiagramNode => node !== null);
+    for (const edgeCell of graph.getChildEdges(parent)) {
+      const edge = cellToEdge(edgeCell);
+      if (edge)
+        this.setEdgeWaypoints(graph, edgeCell, buildEdgeWaypoints(nodes, edge));
+    }
+  }
+
+  private setEdgeWaypoints(graph: Graph, edgeCell: Cell, waypoints: readonly { x: number; y: number }[]): void {
+    const geometry = edgeCell.getGeometry()?.clone();
+    if (!geometry)
+      return;
+    geometry.points = waypoints.length > 0 ? waypoints.map(point => new Point(point.x, point.y)) : null;
+    graph.getDataModel().setGeometry(edgeCell, geometry);
   }
 
   private attachListeners(graph: Graph): void {
@@ -177,4 +285,44 @@ export class MaxGraphAdapterService {
       throw new Error('MaxGraphAdapterService: graph not initialized. Call initializeGraph first.');
     return this.graph;
   }
+}
+
+function buildImportedHierarchyLayout(graph: Graph): HierarchicalLayout {
+  const layout = new HierarchicalLayout(graph, 'north');
+  layout.intraCellSpacing = 90;
+  layout.interRankCellSpacing = 130;
+  layout.interHierarchySpacing = 100;
+  layout.parallelEdgeSpacing = 18;
+  return layout;
+}
+
+function configureLeftButtonPanning(graph: Graph, enabled: boolean): void {
+  const panning = graph.getPlugin<PanningHandler>('PanningHandler');
+  if (!panning)
+    return;
+  panning.useLeftButtonForPanning = enabled;
+  panning.ignoreCell = enabled;
+}
+
+/** Draws an SVG data URL onto a white canvas of the given pixel size and returns a PNG blob. */
+function rasterizeSvg(svgDataUrl: string, width: number, height: number): Promise<Blob> {
+  return new Promise<Blob>((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const context = canvas.getContext('2d');
+      if (!context) {
+        reject(new Error('Contexto 2D indisponível para exportar PNG.'));
+        return;
+      }
+      context.fillStyle = '#ffffff';
+      context.fillRect(0, 0, width, height);
+      context.drawImage(image, 0, 0, width, height);
+      canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Falha ao gerar o PNG.')), 'image/png');
+    };
+    image.onerror = () => reject(new Error('Falha ao rasterizar o SVG do diagrama.'));
+    image.src = svgDataUrl;
+  });
 }

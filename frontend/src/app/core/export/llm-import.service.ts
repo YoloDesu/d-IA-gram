@@ -3,8 +3,14 @@ import { Result, err, ok } from '../../shared/result';
 import { ExportedDiagram } from './llm-format.types';
 import { validatePayload } from './llm-import.validator';
 import { DEFAULT_NODE_SIZE } from '../graph/graph-events';
-import { DiagramNode, NodeType } from '../../shared/models/node.model';
+import { DiagramNode, NodeSize, NodeType } from '../../shared/models/node.model';
 import { DiagramEdge, EdgeLineStyle } from '../../shared/models/edge.model';
+
+const TEXT_PIXEL_WIDTH = 7;
+const NODE_TEXT_PADDING_X = 44;
+const NODE_TEXT_PADDING_Y = 30;
+const NODE_LINE_HEIGHT = 18;
+const MAX_IMPORT_NODE_WIDTH = 360;
 
 /**
  * Parses and validates LLM-modified export JSON, then normalizes it into diagrams the
@@ -43,13 +49,13 @@ export class LlmImportService {
 
   private normalizeNode(node: RawNode): DiagramNode {
     const type = node.type as NodeType;
-    const fallback = DEFAULT_NODE_SIZE[type];
+    const label = typeof node.label === 'string' ? node.label : '';
     return {
       id: node.id,
       type,
-      label: typeof node.label === 'string' ? node.label : '',
+      label,
       position: { x: node.position.x, y: node.position.y },
-      size: node.size ?? fallback
+      size: fitImportedNodeSize(type, label, node.size)
     };
   }
 
@@ -84,4 +90,24 @@ interface RawEdge {
   targetNodeId: string;
   label?: unknown;
   lineStyle?: string;
+}
+
+function fitImportedNodeSize(type: NodeType, label: string, size?: NodeSize): NodeSize {
+  const base = size ?? DEFAULT_NODE_SIZE[type];
+  const textWidth = longestLabelLine(label) * TEXT_PIXEL_WIDTH + NODE_TEXT_PADDING_X;
+  const width = Math.ceil(Math.min(MAX_IMPORT_NODE_WIDTH, Math.max(base.width, textWidth)));
+  const textLines = countWrappedLabelLines(label, width);
+  const height = Math.ceil(Math.max(base.height, textLines * NODE_LINE_HEIGHT + NODE_TEXT_PADDING_Y));
+  return { width, height };
+}
+
+function longestLabelLine(label: string): number {
+  return Math.max(0, ...label.split('\n').map(line => line.length));
+}
+
+function countWrappedLabelLines(label: string, width: number): number {
+  const available = Math.max(1, width - NODE_TEXT_PADDING_X);
+  return label.split('\n')
+    .map(line => Math.max(1, Math.ceil(line.length * TEXT_PIXEL_WIDTH / available)))
+    .reduce((sum, lines) => sum + lines, 0);
 }

@@ -1,3 +1,22 @@
 :host {
   display: block;
 }
+
+.toolbar-button {
+  border: 1px solid rgb(203 213 225);
+  border-radius: 0.25rem;
+  background: #ffffff;
+  color: rgb(51 65 85);
+  font-size: 0.875rem;
+  padding: 0.375rem 0.75rem;
+}
+
+.toolbar-button:hover {
+  background: rgb(248 250 252);
+}
+
+.toolbar-button-active {
+  border-color: rgb(37 99 235);
+  background: rgb(219 234 254);
+  color: rgb(30 64 175);
+}

@@ -10,17 +10,50 @@
 
   <span class="mx-2 h-5 w-px bg-slate-200"></span>
 
+  <span class="mr-1 text-xs font-semibold uppercase tracking-wide text-slate-400">Ferramenta</span>
+  <button
+    class="toolbar-button"
+    [class.toolbar-button-active]="selectedTool() === 'select'"
+    (click)="toolSelected.emit('select')">
+    Selecionar
+  </button>
+  <button
+    class="toolbar-button"
+    [class.toolbar-button-active]="selectedTool() === 'pan'"
+    (click)="toolSelected.emit('pan')">
+    Mover tela
+  </button>
+
+  <span class="mx-2 h-5 w-px bg-slate-200"></span>
+
+  <span class="mr-1 text-xs font-semibold uppercase tracking-wide text-slate-400">Zoom</span>
+  <button class="toolbar-button" (click)="zoomOutRequested.emit()">−</button>
+  <button class="toolbar-button" (click)="resetZoomRequested.emit()">100%</button>
+  <button class="toolbar-button" (click)="zoomInRequested.emit()">+</button>
+
+  <span class="mx-2 h-5 w-px bg-slate-200"></span>
+
   <button
     class="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 disabled:opacity-40"
     [disabled]="!canDelete()"
     (click)="deleteSelected.emit()">
     Excluir
   </button>
+  <button
+    class="rounded border border-red-200 bg-white px-3 py-1.5 text-sm text-red-700 hover:bg-red-50"
+    (click)="clearDiagram.emit()">
+    Limpar tela
+  </button>
 
   <div class="ml-auto flex items-center gap-2">
     @if (saving()) {
       <span class="text-xs text-slate-400">Salvando…</span>
     }
+    <button
+      class="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
+      (click)="exportPngRequested.emit()">
+      Exportar PNG
+    </button>
     <button
       class="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
       (click)="importRequested.emit()">

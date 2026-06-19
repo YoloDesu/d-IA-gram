@@ -16,3 +16,18 @@
   overflow: hidden;
   cursor: default;
 }
+
+.canvas-surface.is-pan-mode {
+  cursor: grab;
+}
+
+.canvas-surface.is-pan-mode:active {
+  cursor: grabbing;
+}
+
+:host ::ng-deep .mxRubberband {
+  position: absolute;
+  border: 1px solid #2563eb;
+  background: #60a5fa;
+  pointer-events: none;
+}
