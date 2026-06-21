@@ -17,6 +17,8 @@ import { DiagramSnapshot, EditorTool, SelectedCellInfo } from '../../core/graph/
 /** Identity used only to label the single diagram inside an LLM export payload. */
 const DIAGRAM_ID = 'diagram';
 const DIAGRAM_NAME = 'Diagrama';
+/** Base name for downloads from this editor (PNG/JSON), matching the "Básico" label. */
+const DOWNLOAD_BASE = 'diagrama-basico';
 
 /**
  * The whole app: one canvas with a toolbar and a properties panel. State lives only in the
@@ -104,7 +106,7 @@ export class Editor {
   /** Exports the current canvas to a high-resolution PNG and downloads it. */
   protected async onExportPng(): Promise<void> {
     const blob = await this.adapter.exportPng();
-    downloadBlob(blob, `${DIAGRAM_NAME}.png`);
+    downloadBlob(blob, `${DOWNLOAD_BASE}.png`);
   }
 
   /** Replaces the canvas with the first imported diagram, auto-arranged by dagre. */

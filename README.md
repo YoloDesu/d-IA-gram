@@ -10,12 +10,17 @@ reimporta o resultado, organizando o layout automaticamente.
 
 ## Páginas
 
-- **Editor (MaxGraph)** — `/`: edição visual de fluxograma (nós, conexões, propriedades), import/export
-  do JSON `d-ia-gram-v1` e exportação PNG.
-- **Modo Mermaid** — `/mermaid` (botão "Modo Mermaid →" na barra): editor de texto Mermaid com preview
-  ao vivo, zoom (até 600%), arrastar-para-navegar, exportação PNG e exportação p/ LLM (instruções +
-  bloco `mermaid`). Oferece os modelos **Fluxograma, Ishikawa, Kanban, Quadrant e Gantt** no header;
-  o modelo escolhido é incluído no texto de export, então a LLM já sabe qual usar.
+- **Modo Básico** — `/` (motor: maxGraph): monta-se o fluxograma na mão (arrasta nós, liga setas,
+  edita no painel). Import/export do JSON `d-ia-gram-v1` e exportação PNG. Só fluxograma.
+- **Modo Avançado** — `/mermaid` (motor: Mermaid; botão "Modo Avançado →" na barra): descreve-se
+  o diagrama como texto (ou gera com IA) e ele desenha sozinho — preview ao vivo, zoom, arrastar-para-
+  navegar, exportação PNG e exportação p/ LLM (instruções + código). Oferece os modelos **Fluxograma,
+  Ishikawa, Kanban, Quadrant e Gantt** no header; o modelo escolhido vai no texto de export, então a
+  LLM já sabe qual usar.
+
+> **Básico** = montar clicando/arrastando (mais simples). **Avançado** = descrever/gerar em texto,
+> com mais tipos de diagrama e melhores resultados, em troca de um pouco mais de complexidade.
+> (maxGraph/Mermaid são apenas os motores internos.)
 
 Em ambas as telas o **Importar** aceita o upload do arquivo (além de colar o texto), e há um
 **modo escuro** (botão no header) — um dark suave em tons slate, com preferência persistida.

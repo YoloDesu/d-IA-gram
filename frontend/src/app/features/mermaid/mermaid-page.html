@@ -1,9 +1,9 @@
 <div class="flex h-full flex-col bg-slate-100 dark:bg-slate-900">
   <header class="flex flex-col border-b border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
     <div class="flex items-center gap-2 px-4 pt-3">
-      <span class="flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-violet-600 to-fuchsia-500 text-sm font-bold text-white shadow-sm">M</span>
-      <h1 class="text-base font-semibold tracking-tight text-slate-800 dark:text-slate-100">Modo Mermaid</h1>
-      <span class="hidden rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500 sm:inline dark:bg-slate-700 dark:text-slate-300">Diagrama por texto</span>
+      <span class="flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-violet-600 to-fuchsia-500 text-sm font-bold text-white shadow-sm">A</span>
+      <h1 class="text-base font-semibold tracking-tight text-slate-800 dark:text-slate-100">Modo Avançado</h1>
+      <span class="hidden rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500 sm:inline dark:bg-slate-700 dark:text-slate-300">escreva ou gere com IA</span>
       <div class="ml-auto">
         <app-theme-toggle />
       </div>
@@ -22,7 +22,7 @@
         class="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50
                dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
         (click)="goBack()">
-        ← Voltar (MaxGraph)
+        ← Modo Básico
       </button>
 
       <span class="mx-2 h-5 w-px bg-slate-200 dark:bg-slate-700"></span>
@@ -56,7 +56,7 @@
 
   <div class="flex flex-1 overflow-hidden">
     <aside class="flex w-80 shrink-0 flex-col border-r border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
-      <span class="border-b border-slate-100 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-400 dark:border-slate-700 dark:text-slate-500">Código Mermaid</span>
+      <span class="border-b border-slate-100 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-400 dark:border-slate-700 dark:text-slate-500">Texto do diagrama (Mermaid)</span>
       <textarea
         class="flex-1 resize-none bg-transparent p-3 font-mono text-xs text-slate-700 focus:outline-none dark:text-slate-200"
         spellcheck="false"
@@ -81,9 +81,9 @@
   @if (showExport()) {
     <app-export-dialog
       [json]="exportText()"
-      title="Exportar Mermaid p/ LLM"
-      [description]="'Copie este texto e envie para uma LLM. Ele já define o modelo (' + selectedType().label + ') e as instruções; a LLM devolve um bloco mermaid que você reimporta aqui.'"
-      fileName="diagrama-mermaid.md"
+      title="Exportar p/ LLM"
+      [description]="'Copie este texto e envie para uma LLM. Ele já define o modelo (' + selectedType().label + ') e as instruções; a LLM devolve o diagrama em texto que você reimporta aqui.'"
+      fileName="diagrama-avancado.md"
       mimeType="text/markdown"
       (closed)="showExport.set(false)" />
   }

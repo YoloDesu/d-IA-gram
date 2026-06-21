@@ -145,7 +145,7 @@ export class MermaidPage {
     const { width, height } = viewBoxSize(svg);
     const sized = withPixelSize(svg, width * PNG_SCALE, height * PNG_SCALE);
     const blob = await svgStringToPng(sized, width * PNG_SCALE, height * PNG_SCALE);
-    downloadBlob(blob, 'diagrama-mermaid.png');
+    downloadBlob(blob, 'diagrama-avancado.png');
   }
 
   protected goBack(): void {
