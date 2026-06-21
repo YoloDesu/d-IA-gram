@@ -45,8 +45,14 @@
       }
     </aside>
 
-    <main class="relative flex-1 overflow-auto p-6">
-      <div #preview class="mermaid-preview origin-top-left" [style.transform]="'scale(' + zoom() + ')'" [innerHTML]="svg()"></div>
+    <main
+      class="relative flex-1 cursor-grab overflow-auto p-6"
+      [class.cursor-grabbing]="isPanning()"
+      (pointerdown)="onPanStart($event)"
+      (pointermove)="onPanMove($event)"
+      (pointerup)="onPanEnd($event)"
+      (pointerleave)="onPanEnd($event)">
+      <div #preview class="mermaid-preview origin-top-left select-none" [style.transform]="'scale(' + zoom() + ')'" [innerHTML]="svg()"></div>
     </main>
   </div>
 

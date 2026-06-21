@@ -12,9 +12,9 @@ import { downloadBlob } from '../../shared/file-download';
 
 const RENDER_DEBOUNCE_MS = 350;
 const PNG_SCALE = 2;
-const ZOOM_STEP = 0.2;
+const ZOOM_STEP = 0.25;
 const ZOOM_MIN = 0.2;
-const ZOOM_MAX = 4;
+const ZOOM_MAX = 6;
 
 /**
  * Mermaid workspace: a code editor with live preview, zoom, PNG export, LLM export (instructions +
@@ -41,9 +41,34 @@ export class MermaidPage {
   protected readonly zoomPercent = computed(() => Math.round(this.zoom() * 100));
   protected readonly exportText = signal('');
   protected readonly showExport = signal(false);
+  protected readonly isPanning = signal(false);
+  private panOrigin = { x: 0, y: 0, scrollLeft: 0, scrollTop: 0 };
 
   constructor() {
     void this.render();
+  }
+
+  /** Click-drag panning of the preview, so very large flows can be navigated without scrollbars. */
+  protected onPanStart(event: PointerEvent): void {
+    const surface = event.currentTarget as HTMLElement;
+    this.panOrigin = { x: event.clientX, y: event.clientY, scrollLeft: surface.scrollLeft, scrollTop: surface.scrollTop };
+    this.isPanning.set(true);
+    surface.setPointerCapture(event.pointerId);
+  }
+
+  protected onPanMove(event: PointerEvent): void {
+    if (!this.isPanning())
+      return;
+    const surface = event.currentTarget as HTMLElement;
+    surface.scrollLeft = this.panOrigin.scrollLeft - (event.clientX - this.panOrigin.x);
+    surface.scrollTop = this.panOrigin.scrollTop - (event.clientY - this.panOrigin.y);
+  }
+
+  protected onPanEnd(event: PointerEvent): void {
+    if (!this.isPanning())
+      return;
+    this.isPanning.set(false);
+    (event.currentTarget as HTMLElement).releasePointerCapture?.(event.pointerId);
   }
 
   protected onCodeChange(code: string): void {
