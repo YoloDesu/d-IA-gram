@@ -51,13 +51,13 @@ public class LlmExportBuilderTests
     }
 
     [Fact]
-    public void BuildDiagramExport_instructs_llm_to_avoid_overlaps()
+    public void BuildDiagramExport_tells_llm_layout_is_automatic_and_to_branch()
     {
         var export = new LlmExportBuilder().BuildDiagramExport(SampleDiagram());
 
-        Assert.Contains("nenhum nó se sobrepõe", export.InstructionsForLlm);
-        Assert.Contains("margem mínima de 40px", export.Capabilities.LayoutHints.MainFlow);
-        Assert.Contains("arestas atravessem caixas", export.Capabilities.LayoutHints.Branching);
+        Assert.Contains("LAYOUT É AUTOMÁTICO", export.InstructionsForLlm);
+        Assert.Contains("AUTOMÁTICO", export.Capabilities.LayoutHints.MainFlow);
+        Assert.Contains("paralelos", export.Capabilities.LayoutHints.Branching);
     }
 
     [Fact]

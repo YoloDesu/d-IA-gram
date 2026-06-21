@@ -22,16 +22,16 @@ export const CAPABILITIES: Capabilities = {
   position_system: { unit: 'px', origin: 'top-left', recommended_spacing: 160 },
   layout_hints: {
     flow_direction: 'top-to-bottom',
-    main_flow: 'Mantenha o caminho principal (caminho feliz) em uma coluna vertical central, ' +
-      'incrementando y em ~160px por passo. Não sobreponha retângulos de nós; deixe margem ' +
-      'mínima de 40px entre caixas vizinhas.',
-    branching: 'Em cada nó "decision", faça o ramo principal (ex.: "sim") continuar para baixo na ' +
-      'coluna central, e o ramo alternativo (ex.: "não") seguir para uma coluna lateral com offset ' +
-      'horizontal de +340px (à direita) ou -340px (à esquerda). Posicione cada ramo em sua própria ' +
-      'faixa para reduzir cruzamentos e evitar que arestas atravessem caixas.',
-    columns: 'Use de 3 a 5 colunas no eixo x quando houver ramificações: uma coluna central para o ' +
-      'fluxo principal e colunas laterais para exceções, validações que falham e retornos. Reuna ' +
-      'ramos abaixo da decisão, não sobre a mesma linha da caixa de decisão.',
+    main_flow: 'O posicionamento é AUTOMÁTICO: ao importar, o app re-organiza os nós e roteia as ' +
+      'arestas com um motor de layout (dagre). Você NÃO precisa acertar pixels — use x/y apenas ' +
+      'aproximados (qualquer valor válido). Concentre-se na ESTRUTURA: nós, conexões e rótulos corretos.',
+    branching: 'Para um bom resultado, prefira LARGURA a profundidade: quando passos são independentes ' +
+      'ou são ramos de uma "decision", modele-os como ramos paralelos (vários filhos do mesmo nó) em vez ' +
+      'de uma única cadeia vertical longa. Cada "decision" deve ter 2+ arestas de saída rotuladas ' +
+      '(ex.: "sim"/"não"). Rótulos de aresta curtos (1–3 palavras).',
+    columns: 'Evite uma "torre" vertical de muitos nós em sequência: agrupe etapas relacionadas e ' +
+      'distribua ramos lado a lado para o layout aproveitar o espaço horizontal. Reúna ramos que ' +
+      'convergem em um nó comum a jusante (use um mesmo targetNodeId) em vez de duplicar caminhos.',
     spacing: { vertical: 160, horizontal: 340 }
   },
   size_defaults: {
@@ -48,6 +48,8 @@ export const LLM_INSTRUCTIONS =
   'Use somente os "node_types" (campo type) e "line_style" de "edge_types" listados. ' +
   'Preserve o "id" de cada nó/aresta existente; para novos elementos gere um UUID v4. ' +
   'Toda aresta deve referenciar "sourceNodeId" e "targetNodeId" de nós existentes. ' +
-  'Posições em pixels (origem no canto superior esquerdo). ' +
-  'Antes de responder, valide que nenhum nó se sobrepõe a outro e que as arestas não atravessam caixas. ' +
+  'O LAYOUT É AUTOMÁTICO: o app reposiciona os nós e roteia as arestas ao importar, então as ' +
+  'posições x/y que você enviar são apenas aproximadas e podem ser quaisquer valores válidos. ' +
+  'Foque na estrutura e siga "layout_hints.branching" — prefira ramos paralelos (largura) a ' +
+  'cadeias verticais longas, e dê a cada "decision" 2+ saídas rotuladas. ' +
   'Retorne o JSON COMPLETO (com $schema, format_version, capabilities e diagrams), sem texto extra fora do JSON.';

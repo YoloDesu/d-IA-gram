@@ -27,12 +27,18 @@ describe('LlmExportService', () => {
     expect(hints.branching.length).toBeGreaterThan(0);
   });
 
-  it('instructs the LLM to avoid node overlaps and edges through boxes', () => {
+  it('tells the LLM that layout is automatic and to favour parallel branches', () => {
     const payload = service.buildFromCurrent('d1', 'Flow', nodes, []);
 
-    expect(payload.instructions_for_llm).toContain('nenhum nó se sobrepõe');
-    expect(payload.capabilities.layout_hints.main_flow).toContain('margem mínima de 40px');
-    expect(payload.capabilities.layout_hints.branching).toContain('arestas atravessem caixas');
+    expect(payload.instructions_for_llm).toContain('LAYOUT É AUTOMÁTICO');
+    expect(payload.capabilities.layout_hints.main_flow).toContain('AUTOMÁTICO');
+    expect(payload.capabilities.layout_hints.branching).toContain('paralelos');
+  });
+
+  it('omits dagre waypoints from exported edges (the LLM works on structure)', () => {
+    const edges = [{ id: 'e1', sourceNodeId: 'n1', targetNodeId: 'n1', lineStyle: 'solid' as const, waypoints: [{ x: 1, y: 2 }] }];
+    const payload = service.buildFromCurrent('d1', 'Flow', nodes, edges);
+    expect(payload.diagrams[0].edges[0]).not.toHaveProperty('waypoints');
   });
 
   it('embeds the diagram nodes', () => {

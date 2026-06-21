@@ -18,7 +18,7 @@ export class LlmExportService {
       format_version: FORMAT_VERSION,
       instructions_for_llm: LLM_INSTRUCTIONS,
       capabilities: CAPABILITIES,
-      diagrams
+      diagrams: diagrams.map(withoutWaypoints)
     };
   }
 
@@ -41,4 +41,9 @@ export class LlmExportService {
   serialize(payload: LlmExportPayload): string {
     return JSON.stringify(payload, null, 2);
   }
+}
+
+/** Drops dagre-computed routing from edges — the LLM works on structure, not pixel routes. */
+function withoutWaypoints(diagram: ExportedDiagram): ExportedDiagram {
+  return { ...diagram, edges: diagram.edges.map(({ waypoints, ...edge }) => edge) };
 }

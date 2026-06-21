@@ -3,7 +3,6 @@ import {
   Cell,
   getDefaultPlugins,
   Graph,
-  HierarchicalLayout,
   InternalEvent,
   PanningHandler,
   Point,
@@ -16,7 +15,7 @@ import { DiagramEdge } from '../../shared/models/edge.model';
 import { buildEdgeStyle, buildNodeStyle } from './node-style.factory';
 import { registerParallelogramShape } from './parallelogram-shape';
 import { cellToEdge, cellToNode } from './graph-cell-mapper';
-import { buildEdgeWaypoints } from './edge-router';
+import { arrangeDiagram } from './dagre-layout';
 import { DEFAULT_NODE_SIZE, DiagramSnapshot, EditorTool, SelectedCellInfo } from './graph-events';
 
 /**
@@ -71,25 +70,19 @@ export class MaxGraphAdapterService {
     const graph = this.require();
     this.isRendering = true;
     try {
-      graph.batchUpdate(() => {
-        this.replaceDiagramCells(graph, nodes, edges);
-        this.routeEdgesAroundNodes(graph);
-      });
+      graph.batchUpdate(() => this.replaceDiagramCells(graph, nodes, edges));
     } finally {
       this.isRendering = false;
     }
   }
 
-  /** Renders an imported diagram, applies a top-to-bottom hierarchy, and returns the new state. */
-  renderHierarchicalDiagram(nodes: readonly DiagramNode[], edges: readonly DiagramEdge[]): DiagramSnapshot {
+  /** Auto-arranges an imported diagram with dagre (positions + edge routes) and returns the new state. */
+  renderArrangedDiagram(nodes: readonly DiagramNode[], edges: readonly DiagramEdge[]): DiagramSnapshot {
     const graph = this.require();
+    const arranged = arrangeDiagram(nodes, edges);
     this.isRendering = true;
     try {
-      graph.batchUpdate(() => {
-        this.replaceDiagramCells(graph, nodes, edges);
-        buildImportedHierarchyLayout(graph).execute(graph.getDefaultParent());
-        this.routeEdgesAroundNodes(graph);
-      });
+      graph.batchUpdate(() => this.replaceDiagramCells(graph, arranged.nodes, arranged.edges));
     } finally {
       this.isRendering = false;
     }
@@ -218,33 +211,27 @@ export class MaxGraphAdapterService {
       const target = cellsById.get(edge.targetNodeId);
       if (!source || !target)
         continue;
-      graph.insertEdge({
+      const cell = graph.insertEdge({
         parent: graph.getDefaultParent(),
         id: edge.id,
         value: edge.label ?? '',
         source,
         target,
-        style: buildEdgeStyle(edge.lineStyle)
+        style: buildEdgeStyle(edge.lineStyle, hasWaypoints(edge))
       });
+      this.applyWaypoints(graph, cell, edge.waypoints);
     }
   }
 
-  private routeEdgesAroundNodes(graph: Graph): void {
-    const parent = graph.getDefaultParent();
-    const nodes = graph.getChildVertices(parent).map(cellToNode).filter((node): node is DiagramNode => node !== null);
-    for (const edgeCell of graph.getChildEdges(parent)) {
-      const edge = cellToEdge(edgeCell);
-      if (edge)
-        this.setEdgeWaypoints(graph, edgeCell, buildEdgeWaypoints(nodes, edge));
-    }
-  }
-
-  private setEdgeWaypoints(graph: Graph, edgeCell: Cell, waypoints: readonly { x: number; y: number }[]): void {
-    const geometry = edgeCell.getGeometry()?.clone();
+  /** Pins an edge to its dagre-computed route so it follows the same path the layout chose. */
+  private applyWaypoints(graph: Graph, cell: Cell, waypoints: DiagramEdge['waypoints']): void {
+    if (!waypoints || waypoints.length === 0)
+      return;
+    const geometry = cell.getGeometry()?.clone();
     if (!geometry)
       return;
-    geometry.points = waypoints.length > 0 ? waypoints.map(point => new Point(point.x, point.y)) : null;
-    graph.getDataModel().setGeometry(edgeCell, geometry);
+    geometry.points = waypoints.map(point => new Point(point.x, point.y));
+    graph.getDataModel().setGeometry(cell, geometry);
   }
 
   private attachListeners(graph: Graph): void {
@@ -287,13 +274,8 @@ export class MaxGraphAdapterService {
   }
 }
 
-function buildImportedHierarchyLayout(graph: Graph): HierarchicalLayout {
-  const layout = new HierarchicalLayout(graph, 'north');
-  layout.intraCellSpacing = 90;
-  layout.interRankCellSpacing = 130;
-  layout.interHierarchySpacing = 100;
-  layout.parallelEdgeSpacing = 18;
-  return layout;
+function hasWaypoints(edge: DiagramEdge): boolean {
+  return (edge.waypoints?.length ?? 0) > 0;
 }
 
 function configureLeftButtonPanning(graph: Graph, enabled: boolean): void {

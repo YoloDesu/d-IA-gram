@@ -158,7 +158,7 @@ export class Editor implements OnInit {
     const first = diagrams[0];
     if (!this.selectedDiagramId() || !first)
       return;
-    const arranged = this.adapter.renderHierarchicalDiagram(first.nodes, first.edges);
+    const arranged = this.adapter.renderArrangedDiagram(first.nodes, first.edges);
     this.nodes.set([...arranged.nodes]);
     this.edges.set([...arranged.edges]);
     this.saving.set(true);

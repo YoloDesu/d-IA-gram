@@ -36,14 +36,21 @@ export function buildNodeStyle(type: NodeType): CellStyle {
   };
 }
 
-/** Builds the maxGraph cell style for a directed edge. */
-export function buildEdgeStyle(lineStyle: EdgeLineStyle): CellStyle {
+/**
+ * Builds the maxGraph cell style for a directed edge. `labelBackgroundColor` keeps edge labels
+ * readable where a line passes near a block.
+ *
+ * `routed` edges follow dagre-computed waypoints, so they use no built-in edgeStyle (a connector
+ * would discard the waypoints and re-route through blocks). Manual edges have no waypoints, so they
+ * use the orthogonal connector for clean, deterministic, zoom-stable right-angle routing.
+ */
+export function buildEdgeStyle(lineStyle: EdgeLineStyle, routed = false): CellStyle {
   return {
-    edgeStyle: EdgeStyle.SegmentConnector,
+    ...(routed ? {} : { edgeStyle: EdgeStyle.OrthConnector, orthogonal: true }),
     endArrow: 'classic',
     strokeColor: '#475569',
     dashed: lineStyle === 'dashed',
-    orthogonal: true,
-    rounded: true
+    rounded: true,
+    labelBackgroundColor: '#ffffff'
   };
 }

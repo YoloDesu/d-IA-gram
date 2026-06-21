@@ -121,8 +121,8 @@ describe('MaxGraphAdapterService', () => {
     expect(graph.getView().getScale()).toBeCloseTo(1, 4);
   });
 
-  it('hierarchically lays out imported nodes that overlap', () => {
-    const snapshot = adapter.renderHierarchicalDiagram(OVERLAPPING_NODES, BRANCH_EDGES);
+  it('auto-arranges imported nodes that overlap into a top-down layout', () => {
+    const snapshot = adapter.renderArrangedDiagram(OVERLAPPING_NODES, BRANCH_EDGES);
     const root = snapshot.nodes.find(n => n.id === 'root')!;
     const children = snapshot.nodes.filter(n => n.id !== 'root');
 

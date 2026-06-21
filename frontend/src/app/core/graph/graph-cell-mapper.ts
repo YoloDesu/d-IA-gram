@@ -1,6 +1,6 @@
 import { Cell, CellStyle } from '@maxgraph/core';
 import { DiagramNode, NodeType } from '../../shared/models/node.model';
-import { DiagramEdge, EdgeLineStyle } from '../../shared/models/edge.model';
+import { DiagramEdge, EdgeLineStyle, EdgePoint } from '../../shared/models/edge.model';
 import { PARALLELOGRAM_SHAPE } from './parallelogram-shape';
 
 /** Infers the flowchart node type from a cell's style (style is the source of truth). */
@@ -40,6 +40,15 @@ export function cellToEdge(cell: Cell): DiagramEdge | null {
     sourceNodeId: source,
     targetNodeId: target,
     label: typeof cell.value === 'string' && cell.value ? cell.value : undefined,
-    lineStyle
+    lineStyle,
+    waypoints: readWaypoints(cell)
   };
+}
+
+/** Reads an edge's routed control points back from its geometry, or undefined when unrouted. */
+function readWaypoints(cell: Cell): readonly EdgePoint[] | undefined {
+  const points = cell.getGeometry()?.points;
+  if (!points || points.length === 0)
+    return undefined;
+  return points.map((point): EdgePoint => ({ x: point.x, y: point.y }));
 }
