@@ -16,6 +16,16 @@
   background: rgb(248 250 252);
 }
 
+:host-context(.dark) .toolbar-button {
+  border-color: rgb(71 85 105);
+  background: rgb(51 65 85);
+  color: rgb(226 232 240);
+}
+
+:host-context(.dark) .toolbar-button:hover {
+  background: rgb(71 85 105);
+}
+
 .mermaid-preview {
   display: inline-block;
 }

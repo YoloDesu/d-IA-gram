@@ -17,7 +17,8 @@ reimporta o resultado, organizando o layout automaticamente.
   bloco `mermaid`). Oferece os modelos **Fluxograma, Ishikawa, Kanban, Quadrant e Gantt** no header;
   o modelo escolhido é incluído no texto de export, então a LLM já sabe qual usar.
 
-Em ambas as telas o **Importar** aceita o upload do arquivo (além de colar o texto).
+Em ambas as telas o **Importar** aceita o upload do arquivo (além de colar o texto), e há um
+**modo escuro** (botão no header) — um dark suave em tons slate, com preferência persistida.
 
 ## Estrutura
 

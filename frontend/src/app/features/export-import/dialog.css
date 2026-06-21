@@ -17,3 +17,8 @@
   padding: 1.25rem;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
+
+:host-context(.dark) .dialog-panel {
+  background-color: #1e293b;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}

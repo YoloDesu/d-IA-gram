@@ -1,6 +1,22 @@
 @import "tailwindcss";
 
+/* Class-based dark mode (toggled on <html>) instead of the OS-only default. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 html, body {
   height: 100%;
   margin: 0;
+}
+
+/*
+ * Soft dark theme: slate (bluish) tones, not pitch-black and not flat gray.
+ * slate-900 (#0f172a) is the deepest surface; chrome uses slate-800 via dark: utilities.
+ */
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark body {
+  background-color: #0f172a;
+  color: #e2e8f0;
 }

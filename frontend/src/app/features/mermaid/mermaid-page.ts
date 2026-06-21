@@ -1,8 +1,9 @@
-import { Component, ElementRef, computed, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ExportDialog } from '../export-import/export-dialog';
+import { ThemeToggle } from '../../shared/theme-toggle';
 import { MermaidRenderService } from '../../core/mermaid/mermaid-render.service';
 import { MermaidExportService } from '../../core/mermaid/mermaid-export.service';
 import { extractMermaidCode } from '../../core/mermaid/mermaid-source';
@@ -12,6 +13,7 @@ import {
   MermaidDiagramType,
   detectDiagramType
 } from '../../core/mermaid/mermaid-diagram-types';
+import { ThemeService } from '../../core/theme/theme.service';
 import { readTextFile } from '../../shared/read-text-file';
 import { svgStringToPng } from '../../shared/svg-to-png';
 import { downloadBlob } from '../../shared/file-download';
@@ -20,7 +22,8 @@ const RENDER_DEBOUNCE_MS = 350;
 const PNG_SCALE = 2;
 const ZOOM_STEP = 0.25;
 const ZOOM_MIN = 0.2;
-const ZOOM_MAX = 6;
+const ZOOM_MAX = 10;
+const FALLBACK_SIZE = { width: 1200, height: 800 };
 
 /**
  * Mermaid workspace: a code editor with live preview, zoom, PNG export, LLM export (instructions +
@@ -28,7 +31,7 @@ const ZOOM_MAX = 6;
  */
 @Component({
   selector: 'app-mermaid-page',
-  imports: [FormsModule, ExportDialog],
+  imports: [FormsModule, ExportDialog, ThemeToggle],
   templateUrl: './mermaid-page.html',
   styleUrl: './mermaid-page.css'
 })
@@ -37,7 +40,7 @@ export class MermaidPage {
   private readonly exporter = inject(MermaidExportService);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly router = inject(Router);
-  private readonly preview = viewChild.required<ElementRef<HTMLDivElement>>('preview');
+  private readonly theme = inject(ThemeService);
   private renderTimer: ReturnType<typeof setTimeout> | null = null;
 
   protected readonly types = MERMAID_DIAGRAM_TYPES;
@@ -53,6 +56,11 @@ export class MermaidPage {
   private panOrigin = { x: 0, y: 0, scrollLeft: 0, scrollTop: 0 };
 
   constructor() {
+    // Re-render with the matching mermaid theme whenever dark mode flips.
+    effect(() => {
+      this.theme.isDark();
+      this.scheduleRender();
+    });
     void this.render();
   }
 
@@ -91,6 +99,14 @@ export class MermaidPage {
     void this.render();
   }
 
+  /** Full class string for a modality chip (active vs idle, light + dark) — keeps the template flat. */
+  protected typeButtonClass(type: MermaidDiagramType): string {
+    const base = 'rounded-full border px-3 py-1 text-sm';
+    if (this.selectedType().id === type.id)
+      return `${base} border-violet-400 bg-violet-100 text-violet-700 dark:border-violet-500 dark:bg-violet-900 dark:text-violet-200`;
+    return `${base} border-slate-300 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600`;
+  }
+
   protected zoomIn(): void {
     this.zoom.update(value => Math.min(ZOOM_MAX, value + ZOOM_STEP));
   }
@@ -120,17 +136,15 @@ export class MermaidPage {
     await this.render();
   }
 
-  /** Rasterizes the rendered SVG (at its intrinsic viewBox size × scale) to a downloadable PNG. */
+  /**
+   * Exports the current diagram as PNG. Always renders with the light theme so the file is readable
+   * anywhere, regardless of the on-screen dark mode.
+   */
   protected async exportPng(): Promise<void> {
-    const svgEl = this.preview().nativeElement.querySelector('svg');
-    if (!svgEl)
-      return;
-    const { width, height } = svgIntrinsicSize(svgEl);
-    const clone = svgEl.cloneNode(true) as SVGSVGElement;
-    clone.setAttribute('width', String(width * PNG_SCALE));
-    clone.setAttribute('height', String(height * PNG_SCALE));
-    const xml = new XMLSerializer().serializeToString(clone);
-    const blob = await svgStringToPng(xml, width * PNG_SCALE, height * PNG_SCALE);
+    const svg = await this.renderer.renderToSvg(this.code(), 'default');
+    const { width, height } = viewBoxSize(svg);
+    const sized = withPixelSize(svg, width * PNG_SCALE, height * PNG_SCALE);
+    const blob = await svgStringToPng(sized, width * PNG_SCALE, height * PNG_SCALE);
     downloadBlob(blob, 'diagrama-mermaid.png');
   }
 
@@ -146,7 +160,7 @@ export class MermaidPage {
 
   private async render(): Promise<void> {
     try {
-      const svg = await this.renderer.renderToSvg(this.code());
+      const svg = await this.renderer.renderToSvg(this.code(), this.theme.isDark() ? 'dark' : 'default');
       this.svg.set(this.sanitizer.bypassSecurityTrustHtml(svg));
       this.error.set('');
     } catch (cause) {
@@ -155,11 +169,19 @@ export class MermaidPage {
   }
 }
 
-/** Reads the SVG's drawing size from its viewBox, falling back to the rendered box. */
-function svgIntrinsicSize(svg: SVGSVGElement): { width: number; height: number } {
-  const box = svg.viewBox?.baseVal;
-  if (box && box.width > 0 && box.height > 0)
-    return { width: box.width, height: box.height };
-  const rect = svg.getBoundingClientRect();
-  return { width: Math.max(1, rect.width), height: Math.max(1, rect.height) };
+/** Reads the intrinsic drawing size from the SVG's viewBox attribute (e.g. "0 0 W H"). */
+function viewBoxSize(svg: string): { width: number; height: number } {
+  const match = /viewBox="([\d.\-\s]+)"/.exec(svg);
+  const parts = match ? match[1].trim().split(/\s+/).map(Number) : [];
+  if (parts.length === 4 && parts[2] > 0 && parts[3] > 0)
+    return { width: parts[2], height: parts[3] };
+  return { ...FALLBACK_SIZE };
+}
+
+/** Sets explicit width/height on the SVG markup so it rasterizes at the requested pixel size. */
+function withPixelSize(svg: string, width: number, height: number): string {
+  const doc = new DOMParser().parseFromString(svg, 'image/svg+xml');
+  doc.documentElement.setAttribute('width', String(width));
+  doc.documentElement.setAttribute('height', String(height));
+  return new XMLSerializer().serializeToString(doc.documentElement);
 }

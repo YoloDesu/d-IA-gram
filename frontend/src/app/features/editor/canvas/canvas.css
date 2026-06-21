@@ -17,6 +17,14 @@
   cursor: default;
 }
 
+/* Soft dark canvas: slate-800 surface with a faint slate grid (nodes keep their own colors). */
+:host-context(.dark) .canvas-surface {
+  background-color: #1e293b;
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.12) 1px, transparent 1px);
+}
+
 .canvas-surface.is-pan-mode {
   cursor: grab;
 }

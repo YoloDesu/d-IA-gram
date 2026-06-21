@@ -1,48 +1,53 @@
-<div class="flex h-full flex-col bg-slate-100">
-  <header class="flex flex-col border-b border-slate-200 bg-white shadow-sm">
+<div class="flex h-full flex-col bg-slate-100 dark:bg-slate-900">
+  <header class="flex flex-col border-b border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
     <div class="flex items-center gap-2 px-4 pt-3">
       <span class="flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-violet-600 to-fuchsia-500 text-sm font-bold text-white shadow-sm">M</span>
-      <h1 class="text-base font-semibold tracking-tight text-slate-800">Modo Mermaid</h1>
-      <span class="hidden rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500 sm:inline">Diagrama por texto</span>
+      <h1 class="text-base font-semibold tracking-tight text-slate-800 dark:text-slate-100">Modo Mermaid</h1>
+      <span class="hidden rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500 sm:inline dark:bg-slate-700 dark:text-slate-300">Diagrama por texto</span>
+      <div class="ml-auto">
+        <app-theme-toggle />
+      </div>
     </div>
 
     <div class="flex flex-wrap items-center gap-2 px-3 pt-2">
-      <span class="mr-1 text-xs font-semibold uppercase tracking-wide text-slate-400">Modelo</span>
+      <span class="mr-1 text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">Modelo</span>
       @for (type of types; track type.id) {
-        <button
-          class="rounded-full border px-3 py-1 text-sm"
-          [class.border-violet-400]="selectedType().id === type.id"
-          [class.bg-violet-100]="selectedType().id === type.id"
-          [class.text-violet-700]="selectedType().id === type.id"
-          [class.border-slate-300]="selectedType().id !== type.id"
-          [class.bg-white]="selectedType().id !== type.id"
-          [class.text-slate-600]="selectedType().id !== type.id"
-          (click)="selectType(type)">
+        <button [class]="typeButtonClass(type)" (click)="selectType(type)">
           {{ type.label }}
         </button>
       }
     </div>
     <div class="flex flex-wrap items-center gap-2 px-3 py-2">
-      <button class="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50" (click)="goBack()">
+      <button
+        class="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50
+               dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
+        (click)="goBack()">
         ← Voltar (MaxGraph)
       </button>
 
-      <span class="mx-2 h-5 w-px bg-slate-200"></span>
+      <span class="mx-2 h-5 w-px bg-slate-200 dark:bg-slate-700"></span>
 
-      <span class="mr-1 text-xs font-semibold uppercase tracking-wide text-slate-400">Zoom</span>
+      <span class="mr-1 text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">Zoom</span>
       <button class="toolbar-button" (click)="zoomOut()">−</button>
       <button class="toolbar-button" (click)="resetZoom()">{{ zoomPercent() }}%</button>
       <button class="toolbar-button" (click)="zoomIn()">+</button>
 
       <div class="ml-auto flex items-center gap-2">
-        <button class="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50" (click)="exportPng()">
+        <button
+          class="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50
+                 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
+          (click)="exportPng()">
           Exportar PNG
         </button>
-        <label class="inline-flex cursor-pointer items-center gap-2 rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50">
+        <label
+          class="inline-flex cursor-pointer items-center gap-2 rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50
+                 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600">
           Importar arquivo
           <input type="file" accept=".mmd,.md,.txt,text/plain" class="hidden" (change)="onFileSelected($event)" />
         </label>
-        <button class="rounded bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-emerald-700" (click)="openExport()">
+        <button
+          class="rounded bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 dark:hover:bg-emerald-500"
+          (click)="openExport()">
           Exportar p/ LLM
         </button>
       </div>
@@ -50,15 +55,15 @@
   </header>
 
   <div class="flex flex-1 overflow-hidden">
-    <aside class="flex w-80 shrink-0 flex-col border-r border-slate-200 bg-white">
-      <span class="border-b border-slate-100 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-400">Código Mermaid</span>
+    <aside class="flex w-80 shrink-0 flex-col border-r border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
+      <span class="border-b border-slate-100 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-400 dark:border-slate-700 dark:text-slate-500">Código Mermaid</span>
       <textarea
-        class="flex-1 resize-none p-3 font-mono text-xs text-slate-700 focus:outline-none"
+        class="flex-1 resize-none bg-transparent p-3 font-mono text-xs text-slate-700 focus:outline-none dark:text-slate-200"
         spellcheck="false"
         [ngModel]="code()"
         (ngModelChange)="onCodeChange($event)"></textarea>
       @if (error()) {
-        <p class="border-t border-red-100 bg-red-50 p-2 font-mono text-xs text-red-700">{{ error() }}</p>
+        <p class="border-t border-red-100 bg-red-50 p-2 font-mono text-xs text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-300">{{ error() }}</p>
       }
     </aside>
 
@@ -69,7 +74,7 @@
       (pointermove)="onPanMove($event)"
       (pointerup)="onPanEnd($event)"
       (pointerleave)="onPanEnd($event)">
-      <div #preview class="mermaid-preview origin-top-left select-none" [style.transform]="'scale(' + zoom() + ')'" [innerHTML]="svg()"></div>
+      <div class="mermaid-preview origin-top-left select-none" [style.transform]="'scale(' + zoom() + ')'" [innerHTML]="svg()"></div>
     </main>
   </div>
 

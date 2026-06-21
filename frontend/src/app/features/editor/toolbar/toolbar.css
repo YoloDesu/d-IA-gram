@@ -20,3 +20,19 @@
   background: rgb(219 234 254);
   color: rgb(30 64 175);
 }
+
+:host-context(.dark) .toolbar-button {
+  border-color: rgb(71 85 105);
+  background: rgb(51 65 85);
+  color: rgb(226 232 240);
+}
+
+:host-context(.dark) .toolbar-button:hover {
+  background: rgb(71 85 105);
+}
+
+:host-context(.dark) .toolbar-button-active {
+  border-color: rgb(59 130 246);
+  background: rgb(30 58 138);
+  color: rgb(191 219 254);
+}

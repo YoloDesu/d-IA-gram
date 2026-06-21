@@ -5,25 +5,27 @@ import mermaid from 'mermaid';
  * Thin wrapper owning the mermaid library (CLAUDE.md: wrap third-party libs). The rest of the app
  * only sees `code in → SVG string out`, never a mermaid type. Lazy-initializes mermaid once.
  */
+export type MermaidTheme = 'default' | 'dark';
+
 @Injectable({ providedIn: 'root' })
 export class MermaidRenderService {
-  private initialized = false;
+  private appliedTheme: MermaidTheme | null = null;
   private renderCount = 0;
 
   /**
-   * Renders Mermaid source to an SVG string. Rejects with the mermaid parse error when the
-   * syntax is invalid, so callers can surface it to the user.
+   * Renders Mermaid source to an SVG string using the given theme ('dark' for the app's dark mode).
+   * Rejects with the mermaid parse error when the syntax is invalid, so callers can surface it.
    */
-  async renderToSvg(code: string): Promise<string> {
-    this.ensureInitialized();
+  async renderToSvg(code: string, theme: MermaidTheme = 'default'): Promise<string> {
+    this.ensureTheme(theme);
     const { svg } = await mermaid.render(`mermaid-render-${this.renderCount++}`, code);
     return svg;
   }
 
-  private ensureInitialized(): void {
-    if (this.initialized)
+  private ensureTheme(theme: MermaidTheme): void {
+    if (this.appliedTheme === theme)
       return;
-    mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: 'default' });
-    this.initialized = true;
+    mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme });
+    this.appliedTheme = theme;
   }
 }

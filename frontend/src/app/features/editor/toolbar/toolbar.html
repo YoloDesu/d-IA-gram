@@ -1,16 +1,17 @@
 <div class="flex flex-wrap items-center gap-2">
-  <span class="mr-1 text-xs font-semibold uppercase tracking-wide text-slate-400">Adicionar</span>
+  <span class="mr-1 text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">Adicionar</span>
   @for (button of nodeButtons; track button.type) {
     <button
-      class="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:border-blue-400 hover:bg-blue-50"
+      class="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:border-blue-400 hover:bg-blue-50
+             dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:border-blue-500 dark:hover:bg-slate-600"
       (click)="addNode.emit(button.type)">
       + {{ button.label }}
     </button>
   }
 
-  <span class="mx-2 h-5 w-px bg-slate-200"></span>
+  <span class="mx-2 h-5 w-px bg-slate-200 dark:bg-slate-700"></span>
 
-  <span class="mr-1 text-xs font-semibold uppercase tracking-wide text-slate-400">Ferramenta</span>
+  <span class="mr-1 text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">Ferramenta</span>
   <button
     class="toolbar-button"
     [class.toolbar-button-active]="selectedTool() === 'select'"
@@ -24,45 +25,50 @@
     Mover tela
   </button>
 
-  <span class="mx-2 h-5 w-px bg-slate-200"></span>
+  <span class="mx-2 h-5 w-px bg-slate-200 dark:bg-slate-700"></span>
 
-  <span class="mr-1 text-xs font-semibold uppercase tracking-wide text-slate-400">Zoom</span>
+  <span class="mr-1 text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">Zoom</span>
   <button class="toolbar-button" (click)="zoomOutRequested.emit()">−</button>
   <button class="toolbar-button" (click)="resetZoomRequested.emit()">100%</button>
   <button class="toolbar-button" (click)="zoomInRequested.emit()">+</button>
 
-  <span class="mx-2 h-5 w-px bg-slate-200"></span>
+  <span class="mx-2 h-5 w-px bg-slate-200 dark:bg-slate-700"></span>
 
   <button
-    class="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 disabled:opacity-40"
+    class="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 disabled:opacity-40
+           dark:border-slate-600 dark:bg-slate-700 dark:text-red-400 dark:hover:bg-slate-600"
     [disabled]="!canDelete()"
     (click)="deleteSelected.emit()">
     Excluir
   </button>
   <button
-    class="rounded border border-red-200 bg-white px-3 py-1.5 text-sm text-red-700 hover:bg-red-50"
+    class="rounded border border-red-200 bg-white px-3 py-1.5 text-sm text-red-700 hover:bg-red-50
+           dark:border-red-900 dark:bg-slate-700 dark:text-red-300 dark:hover:bg-slate-600"
     (click)="clearDiagram.emit()">
     Limpar tela
   </button>
 
   <div class="ml-auto flex items-center gap-2">
     <button
-      class="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
+      class="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50
+             dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
       (click)="exportPngRequested.emit()">
       Exportar PNG
     </button>
     <button
-      class="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
+      class="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50
+             dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
       (click)="importRequested.emit()">
       Importar
     </button>
     <button
-      class="rounded bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-emerald-700"
+      class="rounded bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 dark:hover:bg-emerald-500"
       (click)="exportRequested.emit()">
       Exportar p/ LLM
     </button>
     <button
-      class="rounded border border-violet-300 bg-violet-50 px-3 py-1.5 text-sm font-medium text-violet-700 hover:bg-violet-100"
+      class="rounded border border-violet-300 bg-violet-50 px-3 py-1.5 text-sm font-medium text-violet-700 hover:bg-violet-100
+             dark:border-violet-700 dark:bg-violet-950 dark:text-violet-300 dark:hover:bg-violet-900"
       (click)="openMermaidRequested.emit()">
       Modo Mermaid →
     </button>

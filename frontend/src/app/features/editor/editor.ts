@@ -5,6 +5,7 @@ import { Toolbar } from './toolbar/toolbar';
 import { PropertiesPanel } from './properties-panel/properties-panel';
 import { ExportDialog } from '../export-import/export-dialog';
 import { ImportDialog } from '../export-import/import-dialog';
+import { ThemeToggle } from '../../shared/theme-toggle';
 import { MaxGraphAdapterService } from '../../core/graph/maxgraph-adapter';
 import { LlmExportService } from '../../core/export/llm-export.service';
 import { ExportedDiagram } from '../../core/export/llm-format.types';
@@ -24,7 +25,7 @@ const DIAGRAM_NAME = 'Diagrama';
  */
 @Component({
   selector: 'app-editor',
-  imports: [Canvas, Toolbar, PropertiesPanel, ExportDialog, ImportDialog],
+  imports: [Canvas, Toolbar, PropertiesPanel, ExportDialog, ImportDialog, ThemeToggle],
   templateUrl: './editor.html',
   styleUrl: './editor.css',
   providers: [MaxGraphAdapterService]
