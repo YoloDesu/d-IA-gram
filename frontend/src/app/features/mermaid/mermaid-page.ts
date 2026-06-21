@@ -5,7 +5,13 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ExportDialog } from '../export-import/export-dialog';
 import { MermaidRenderService } from '../../core/mermaid/mermaid-render.service';
 import { MermaidExportService } from '../../core/mermaid/mermaid-export.service';
-import { SAMPLE_MERMAID, extractMermaidCode } from '../../core/mermaid/mermaid-source';
+import { extractMermaidCode } from '../../core/mermaid/mermaid-source';
+import {
+  DEFAULT_DIAGRAM_TYPE,
+  MERMAID_DIAGRAM_TYPES,
+  MermaidDiagramType,
+  detectDiagramType
+} from '../../core/mermaid/mermaid-diagram-types';
 import { readTextFile } from '../../shared/read-text-file';
 import { svgStringToPng } from '../../shared/svg-to-png';
 import { downloadBlob } from '../../shared/file-download';
@@ -34,7 +40,9 @@ export class MermaidPage {
   private readonly preview = viewChild.required<ElementRef<HTMLDivElement>>('preview');
   private renderTimer: ReturnType<typeof setTimeout> | null = null;
 
-  protected readonly code = signal(SAMPLE_MERMAID);
+  protected readonly types = MERMAID_DIAGRAM_TYPES;
+  protected readonly selectedType = signal<MermaidDiagramType>(DEFAULT_DIAGRAM_TYPE);
+  protected readonly code = signal(DEFAULT_DIAGRAM_TYPE.sample);
   protected readonly svg = signal<SafeHtml>('');
   protected readonly error = signal('');
   protected readonly zoom = signal(1);
@@ -76,6 +84,13 @@ export class MermaidPage {
     this.scheduleRender();
   }
 
+  /** Loads a modality's starter diagram so the user discovers the available formats. */
+  protected selectType(type: MermaidDiagramType): void {
+    this.selectedType.set(type);
+    this.code.set(type.sample);
+    void this.render();
+  }
+
   protected zoomIn(): void {
     this.zoom.update(value => Math.min(ZOOM_MAX, value + ZOOM_STEP));
   }
@@ -89,7 +104,7 @@ export class MermaidPage {
   }
 
   protected openExport(): void {
-    this.exportText.set(this.exporter.buildExport(this.code()));
+    this.exportText.set(this.exporter.buildExport(this.code(), this.selectedType()));
     this.showExport.set(true);
   }
 
@@ -99,7 +114,9 @@ export class MermaidPage {
     input.value = '';
     if (!file)
       return;
-    this.code.set(extractMermaidCode(await readTextFile(file)));
+    const code = extractMermaidCode(await readTextFile(file));
+    this.code.set(code);
+    this.selectedType.set(detectDiagramType(code) ?? this.selectedType());
     await this.render();
   }
 

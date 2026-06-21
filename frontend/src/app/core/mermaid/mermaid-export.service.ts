@@ -1,22 +1,32 @@
 import { Injectable } from '@angular/core';
+import { MermaidDiagramType } from './mermaid-diagram-types';
 
-/** Guidance embedded in the export so an LLM knows how to edit and return the Mermaid diagram. */
+/** General guidance (type-agnostic) embedded in every Mermaid export. */
 export const MERMAID_LLM_INSTRUCTIONS =
-  'Você recebeu um fluxograma em Mermaid exportado do d-IA-gram. ' +
-  'Edite o diagrama conforme o pedido do usuário e devolva APENAS um bloco de código Mermaid ' +
+  'Você recebeu um diagrama em Mermaid exportado do d-IA-gram. ' +
+  'Edite-o conforme o pedido do usuário e devolva APENAS um bloco de código Mermaid ' +
   'delimitado por uma cerca de código com a marca mermaid, sem texto fora do bloco. ' +
-  'Use a sintaxe de flowchart do Mermaid (ex.: "flowchart TD"). O layout é automático: foque na ' +
-  'estrutura (nós, conexões e rótulos), prefira ramos paralelos a cadeias verticais longas e dê a ' +
-  'cada decisão saídas rotuladas (ex.: -->|sim| e -->|não|).';
+  'MANTENHA o tipo de diagrama indicado abaixo (use exatamente a palavra-chave inicial dele). ' +
+  'O layout é automático: foque na estrutura e nos rótulos.';
 
 /**
- * Builds the text that the user copies/downloads to send to an LLM: the instructions followed by
- * the current diagram inside a ```mermaid fence (which the importer reads back).
+ * Builds the text the user copies/downloads to send to an LLM: a header naming the chosen modality,
+ * the general instructions, the modality-specific guidance and the current diagram inside a
+ * ```mermaid fence (which the importer reads back).
  */
 @Injectable({ providedIn: 'root' })
 export class MermaidExportService {
-  /** @example buildExport('flowchart TD\n a-->b') // instructions + fenced mermaid block */
-  buildExport(code: string): string {
-    return `${MERMAID_LLM_INSTRUCTIONS}\n\n\`\`\`mermaid\n${code.trim()}\n\`\`\`\n`;
+  /** @example buildExport('flowchart TD\n a-->b', flowchartType) // header + instructions + fenced code */
+  buildExport(code: string, type: MermaidDiagramType): string {
+    return [
+      `Modelo de diagrama: ${type.label} (id: ${type.id}).`,
+      MERMAID_LLM_INSTRUCTIONS,
+      type.instruction,
+      '',
+      '```mermaid',
+      code.trim(),
+      '```',
+      ''
+    ].join('\n');
   }
 }

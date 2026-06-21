@@ -13,8 +13,9 @@ reimporta o resultado, organizando o layout automaticamente.
 - **Editor (MaxGraph)** — `/`: edição visual de fluxograma (nós, conexões, propriedades), import/export
   do JSON `d-ia-gram-v1` e exportação PNG.
 - **Modo Mermaid** — `/mermaid` (botão "Modo Mermaid →" na barra): editor de texto Mermaid com preview
-  ao vivo, zoom, exportação PNG e exportação p/ LLM (instruções + bloco `mermaid`). Acesse pelo botão
-  ao lado de "Exportar p/ LLM".
+  ao vivo, zoom (até 600%), arrastar-para-navegar, exportação PNG e exportação p/ LLM (instruções +
+  bloco `mermaid`). Oferece os modelos **Fluxograma, Ishikawa, Kanban, Quadrant e Gantt** no header;
+  o modelo escolhido é incluído no texto de export, então a LLM já sabe qual usar.
 
 Em ambas as telas o **Importar** aceita o upload do arquivo (além de colar o texto).
 

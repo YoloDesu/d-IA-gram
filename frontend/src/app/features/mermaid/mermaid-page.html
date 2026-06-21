@@ -5,6 +5,23 @@
       <h1 class="text-base font-semibold tracking-tight text-slate-800">Modo Mermaid</h1>
       <span class="hidden rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500 sm:inline">Diagrama por texto</span>
     </div>
+
+    <div class="flex flex-wrap items-center gap-2 px-3 pt-2">
+      <span class="mr-1 text-xs font-semibold uppercase tracking-wide text-slate-400">Modelo</span>
+      @for (type of types; track type.id) {
+        <button
+          class="rounded-full border px-3 py-1 text-sm"
+          [class.border-violet-400]="selectedType().id === type.id"
+          [class.bg-violet-100]="selectedType().id === type.id"
+          [class.text-violet-700]="selectedType().id === type.id"
+          [class.border-slate-300]="selectedType().id !== type.id"
+          [class.bg-white]="selectedType().id !== type.id"
+          [class.text-slate-600]="selectedType().id !== type.id"
+          (click)="selectType(type)">
+          {{ type.label }}
+        </button>
+      }
+    </div>
     <div class="flex flex-wrap items-center gap-2 px-3 py-2">
       <button class="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50" (click)="goBack()">
         ← Voltar (MaxGraph)
@@ -60,7 +77,7 @@
     <app-export-dialog
       [json]="exportText()"
       title="Exportar Mermaid p/ LLM"
-      description="Copie este texto (instruções + código Mermaid) e envie para uma LLM. Ela devolve um bloco ```mermaid que você reimporta aqui."
+      [description]="'Copie este texto e envie para uma LLM. Ele já define o modelo (' + selectedType().label + ') e as instruções; a LLM devolve um bloco mermaid que você reimporta aqui.'"
       fileName="diagrama-mermaid.md"
       mimeType="text/markdown"
       (closed)="showExport.set(false)" />
