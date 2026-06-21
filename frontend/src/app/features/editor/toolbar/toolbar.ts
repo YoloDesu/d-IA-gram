@@ -15,7 +15,6 @@ interface NodeButton {
   styleUrl: './toolbar.css'
 })
 export class Toolbar {
-  readonly saving = input(false);
   readonly canDelete = input(false);
   readonly selectedTool = input<EditorTool>('select');
 

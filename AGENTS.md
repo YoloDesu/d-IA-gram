@@ -22,8 +22,8 @@
 ## Tests
 
 - Tests run with a single command:
-  backend `cd backend && dotnet test`;
-  frontend `cd frontend && NG_DISABLE_VERSION_CHECK=1 npx ng test --watch=false`.
+  `cd frontend && NG_DISABLE_VERSION_CHECK=1 npx ng test --watch=false`.
+  The app is frontend-only (Angular); there is no backend or database.
 - Every new function gets a test. Bug fixes get a regression test.
 - Mock external I/O (API, DB, filesystem) with named fake classes,
   not inline stubs.

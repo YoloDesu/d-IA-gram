@@ -1,10 +1,12 @@
-<div class="flex h-full flex-col">
-  <header class="flex items-center gap-3 border-b border-slate-200 bg-white px-4 py-2">
-    <button class="text-sm text-blue-600 hover:underline" (click)="goBack()">← Projetos</button>
-    <span class="font-semibold text-slate-700">{{ projectName() }}</span>
-    <div class="ml-4 flex-1">
+<div class="flex h-full flex-col bg-slate-100">
+  <header class="flex flex-col border-b border-slate-200 bg-white shadow-sm">
+    <div class="flex items-center gap-2 px-4 pt-3">
+      <span class="flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-blue-600 to-emerald-500 text-sm font-bold text-white shadow-sm">d</span>
+      <h1 class="text-base font-semibold tracking-tight text-slate-800">d-IA-gram</h1>
+      <span class="hidden rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500 sm:inline">Editor de fluxogramas</span>
+    </div>
+    <div class="px-3 py-2">
       <app-toolbar
-        [saving]="saving()"
         [canDelete]="selectedCell() !== null"
         [selectedTool]="selectedTool()"
         (addNode)="onAddNode($event)"
@@ -21,24 +23,22 @@
   </header>
 
   <div class="flex flex-1 overflow-hidden">
-    <aside class="w-52 shrink-0 border-r border-slate-200 bg-slate-50">
-      <app-diagram-list
-        [diagrams]="diagrams()"
-        [selectedId]="selectedDiagramId()"
-        (selectDiagram)="onSelectDiagram($event)"
-        (createDiagram)="onCreateDiagram($event)" />
-    </aside>
-
     <main class="relative flex-1 overflow-hidden">
-      @if (selectedDiagramId()) {
-        <app-canvas
-          [nodes]="nodes()"
-          [edges]="edges()"
-          (snapshotChanged)="onSnapshot($event)"
-          (selectionChanged)="onSelection($event)" />
-      } @else {
-        <div class="flex h-full items-center justify-center text-slate-400">
-          Crie ou selecione um diagrama para começar.
+      <app-canvas
+        [nodes]="nodes()"
+        [edges]="edges()"
+        (snapshotChanged)="onSnapshot($event)"
+        (selectionChanged)="onSelection($event)" />
+
+      @if (isEmpty()) {
+        <div class="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <div class="rounded-xl border border-dashed border-slate-300 bg-white/70 px-8 py-6 text-center shadow-sm backdrop-blur-sm">
+            <p class="text-sm font-medium text-slate-600">Comece seu diagrama</p>
+            <p class="mt-1 text-xs leading-relaxed text-slate-400">
+              Adicione um nó pela barra acima<br />
+              ou <span class="font-medium text-slate-500">importe um JSON</span> da LLM.
+            </p>
+          </div>
         </div>
       }
     </main>

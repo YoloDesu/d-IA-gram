@@ -2,34 +2,24 @@
 
 Editor de fluxogramas web (estilo Mermaid/draw.io) com um diferencial: **exportar o
 diagrama para um JSON auto-descritivo que uma LLM entende, modifica e devolve** — e o app
-reimporta o resultado.
+reimporta o resultado, organizando o layout automaticamente.
 
-- **Backend**: .NET 8 Minimal API + EF Core (SQLite)
-- **Frontend**: Angular 21 (standalone) + maxGraph (canvas) + TailwindCSS
+- **Frontend-only**: Angular 21 (standalone) + maxGraph (canvas) + dagre (layout) + TailwindCSS
+- **Sem backend e sem banco de dados**: tudo roda no navegador. Import/export (JSON da LLM) e
+  exportação PNG são feitos no cliente; nada é salvo em servidor.
 
 ## Estrutura
 
 ```
-backend/   → DiAGram.Api (API) + DiAGram.Tests (xUnit)
-frontend/  → app Angular
+frontend/  → app Angular (tela única: o editor de diagrama)
 ```
 
 ## Como rodar
 
-### Backend
-```bash
-cd backend/DiAGram.Api
-dotnet run            # Swagger em http://localhost:5294/swagger (porta do launchSettings)
-```
-A migration é aplicada no startup (cria `diagrams.db`).
-
-### Frontend
 ```bash
 cd frontend
 NG_DISABLE_VERSION_CHECK=1 npx ng serve   # http://localhost:4200
 ```
-`apiBaseUrl` aponta para `http://localhost:5294` (ver `src/environments/environment.ts`).
-O CORS do backend libera `http://localhost:4200`.
 
 > Node 25 não é suportado oficialmente pelo Angular; o env `NG_DISABLE_VERSION_CHECK=1`
 > silencia o erro de versão.
@@ -37,8 +27,7 @@ O CORS do backend libera `http://localhost:4200`.
 ## Testes
 
 ```bash
-cd backend  && dotnet test                                   # 32 testes
-cd frontend && NG_DISABLE_VERSION_CHECK=1 npx ng test --watch=false   # 48 testes
+cd frontend && NG_DISABLE_VERSION_CHECK=1 npx ng test --watch=false
 ```
 
 ## Tipos de elementos
@@ -55,9 +44,10 @@ Arestas: `solid` (fluxo padrão) ou `dashed` (opcional/exceção).
 ## Formato de exportação LLM (`d-ia-gram-v1`)
 
 O JSON exportado contém `instructions_for_llm`, um bloco `capabilities` (tipos de nó/aresta,
-operações suportadas, sistema de coordenadas, tamanhos padrão) e o array `diagrams`. A LLM
-modifica apenas `diagrams` (preservando os `id`) e devolve o JSON completo, que é reimportado
-pela tela de Importar.
+operações suportadas, dicas de layout) e o array `diagrams`. A LLM modifica apenas `diagrams`
+(preservando os `id`) e devolve o JSON completo, que é reimportado pela tela de Importar.
+O **posicionamento é automático**: ao importar, o app re-organiza os nós e roteia as arestas
+com o dagre, então a LLM foca na estrutura (nós, conexões, rótulos), não em coordenadas.
 
 ## Atalhos
 
