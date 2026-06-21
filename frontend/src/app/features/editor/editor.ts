@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { Canvas } from './canvas/canvas';
 import { Toolbar } from './toolbar/toolbar';
 import { PropertiesPanel } from './properties-panel/properties-panel';
@@ -31,6 +32,7 @@ const DIAGRAM_NAME = 'Diagrama';
 export class Editor {
   private readonly adapter = inject(MaxGraphAdapterService);
   private readonly exporter = inject(LlmExportService);
+  private readonly router = inject(Router);
 
   protected readonly nodes = signal<readonly DiagramNode[]>([]);
   protected readonly edges = signal<readonly DiagramEdge[]>([]);
@@ -92,6 +94,10 @@ export class Editor {
 
   protected onImport(): void {
     this.showImport.set(true);
+  }
+
+  protected onOpenMermaid(): void {
+    this.router.navigate(['/mermaid']);
   }
 
   /** Exports the current canvas to a high-resolution PNG and downloads it. */

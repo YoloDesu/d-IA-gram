@@ -28,6 +28,7 @@ export class Toolbar {
   readonly exportRequested = output<void>();
   readonly importRequested = output<void>();
   readonly exportPngRequested = output<void>();
+  readonly openMermaidRequested = output<void>();
 
   protected readonly nodeButtons: readonly NodeButton[] = [
     { type: 'terminal', label: 'Terminal' },

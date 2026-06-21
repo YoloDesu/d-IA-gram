@@ -16,6 +16,7 @@ import { buildEdgeStyle, buildNodeStyle } from './node-style.factory';
 import { registerParallelogramShape } from './parallelogram-shape';
 import { cellToEdge, cellToNode } from './graph-cell-mapper';
 import { arrangeDiagram } from './dagre-layout';
+import { svgStringToPng } from '../../shared/svg-to-png';
 import { DEFAULT_NODE_SIZE, DiagramSnapshot, EditorTool, SelectedCellInfo } from './graph-events';
 
 /**
@@ -169,7 +170,7 @@ export class MaxGraphAdapterService {
     clone.setAttribute('height', String(height * scale));
     clone.setAttribute('viewBox', `${bounds.x - padding} ${bounds.y - padding} ${width} ${height}`);
     const xml = new XMLSerializer().serializeToString(clone);
-    return rasterizeSvg(`data:image/svg+xml;charset=utf-8,${encodeURIComponent(xml)}`, width * scale, height * scale);
+    return svgStringToPng(xml, width * scale, height * scale);
   }
 
   destroyGraph(): void {
@@ -284,27 +285,4 @@ function configureLeftButtonPanning(graph: Graph, enabled: boolean): void {
     return;
   panning.useLeftButtonForPanning = enabled;
   panning.ignoreCell = enabled;
-}
-
-/** Draws an SVG data URL onto a white canvas of the given pixel size and returns a PNG blob. */
-function rasterizeSvg(svgDataUrl: string, width: number, height: number): Promise<Blob> {
-  return new Promise<Blob>((resolve, reject) => {
-    const image = new Image();
-    image.onload = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = width;
-      canvas.height = height;
-      const context = canvas.getContext('2d');
-      if (!context) {
-        reject(new Error('Contexto 2D indisponível para exportar PNG.'));
-        return;
-      }
-      context.fillStyle = '#ffffff';
-      context.fillRect(0, 0, width, height);
-      context.drawImage(image, 0, 0, width, height);
-      canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Falha ao gerar o PNG.')), 'image/png');
-    };
-    image.onerror = () => reject(new Error('Falha ao rasterizar o SVG do diagrama.'));
-    image.src = svgDataUrl;
-  });
 }

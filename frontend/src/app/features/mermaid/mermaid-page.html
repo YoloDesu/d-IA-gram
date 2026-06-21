@@ -1,0 +1,62 @@
+<div class="flex h-full flex-col bg-slate-100">
+  <header class="flex flex-col border-b border-slate-200 bg-white shadow-sm">
+    <div class="flex items-center gap-2 px-4 pt-3">
+      <span class="flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-violet-600 to-fuchsia-500 text-sm font-bold text-white shadow-sm">M</span>
+      <h1 class="text-base font-semibold tracking-tight text-slate-800">Modo Mermaid</h1>
+      <span class="hidden rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500 sm:inline">Diagrama por texto</span>
+    </div>
+    <div class="flex flex-wrap items-center gap-2 px-3 py-2">
+      <button class="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50" (click)="goBack()">
+        ← Voltar (MaxGraph)
+      </button>
+
+      <span class="mx-2 h-5 w-px bg-slate-200"></span>
+
+      <span class="mr-1 text-xs font-semibold uppercase tracking-wide text-slate-400">Zoom</span>
+      <button class="toolbar-button" (click)="zoomOut()">−</button>
+      <button class="toolbar-button" (click)="resetZoom()">{{ zoomPercent() }}%</button>
+      <button class="toolbar-button" (click)="zoomIn()">+</button>
+
+      <div class="ml-auto flex items-center gap-2">
+        <button class="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50" (click)="exportPng()">
+          Exportar PNG
+        </button>
+        <label class="inline-flex cursor-pointer items-center gap-2 rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50">
+          Importar arquivo
+          <input type="file" accept=".mmd,.md,.txt,text/plain" class="hidden" (change)="onFileSelected($event)" />
+        </label>
+        <button class="rounded bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-emerald-700" (click)="openExport()">
+          Exportar p/ LLM
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="flex flex-1 overflow-hidden">
+    <aside class="flex w-80 shrink-0 flex-col border-r border-slate-200 bg-white">
+      <span class="border-b border-slate-100 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-400">Código Mermaid</span>
+      <textarea
+        class="flex-1 resize-none p-3 font-mono text-xs text-slate-700 focus:outline-none"
+        spellcheck="false"
+        [ngModel]="code()"
+        (ngModelChange)="onCodeChange($event)"></textarea>
+      @if (error()) {
+        <p class="border-t border-red-100 bg-red-50 p-2 font-mono text-xs text-red-700">{{ error() }}</p>
+      }
+    </aside>
+
+    <main class="relative flex-1 overflow-auto p-6">
+      <div #preview class="mermaid-preview origin-top-left" [style.transform]="'scale(' + zoom() + ')'" [innerHTML]="svg()"></div>
+    </main>
+  </div>
+
+  @if (showExport()) {
+    <app-export-dialog
+      [json]="exportText()"
+      title="Exportar Mermaid p/ LLM"
+      description="Copie este texto (instruções + código Mermaid) e envie para uma LLM. Ela devolve um bloco ```mermaid que você reimporta aqui."
+      fileName="diagrama-mermaid.md"
+      mimeType="text/markdown"
+      (closed)="showExport.set(false)" />
+  }
+</div>

@@ -1,6 +1,7 @@
 import { Component, input, output, signal } from '@angular/core';
+import { downloadBlob } from '../../shared/file-download';
 
-/** Modal that shows the LLM export JSON with copy-to-clipboard and download actions. */
+/** Modal that shows export text (LLM JSON or Mermaid) with copy-to-clipboard and download actions. */
 @Component({
   selector: 'app-export-dialog',
   imports: [],
@@ -9,7 +10,12 @@ import { Component, input, output, signal } from '@angular/core';
 })
 export class ExportDialog {
   readonly json = input.required<string>();
+  readonly title = input('Exportar para LLM');
+  readonly description = input(
+    'Copie este texto e envie para uma LLM. Ela pode modificar o diagrama e devolver o arquivo, que você reimporta aqui.'
+  );
   readonly fileName = input('diagrama.json');
+  readonly mimeType = input('application/json');
   readonly closed = output<void>();
 
   protected readonly copied = signal(false);
@@ -21,12 +27,6 @@ export class ExportDialog {
   }
 
   protected download(): void {
-    const blob = new Blob([this.json()], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = this.fileName();
-    anchor.click();
-    URL.revokeObjectURL(url);
+    downloadBlob(new Blob([this.json()], { type: this.mimeType() }), this.fileName());
   }
 }

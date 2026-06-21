@@ -4,9 +4,19 @@ Editor de fluxogramas web (estilo Mermaid/draw.io) com um diferencial: **exporta
 diagrama para um JSON auto-descritivo que uma LLM entende, modifica e devolve** — e o app
 reimporta o resultado, organizando o layout automaticamente.
 
-- **Frontend-only**: Angular 21 (standalone) + maxGraph (canvas) + dagre (layout) + TailwindCSS
-- **Sem backend e sem banco de dados**: tudo roda no navegador. Import/export (JSON da LLM) e
-  exportação PNG são feitos no cliente; nada é salvo em servidor.
+- **Frontend-only**: Angular 21 (standalone) + maxGraph (canvas) + dagre (layout) + Mermaid + TailwindCSS
+- **Sem backend e sem banco de dados**: tudo roda no navegador. Import/export (JSON da LLM ou
+  Mermaid) e exportação PNG são feitos no cliente; nada é salvo em servidor.
+
+## Páginas
+
+- **Editor (MaxGraph)** — `/`: edição visual de fluxograma (nós, conexões, propriedades), import/export
+  do JSON `d-ia-gram-v1` e exportação PNG.
+- **Modo Mermaid** — `/mermaid` (botão "Modo Mermaid →" na barra): editor de texto Mermaid com preview
+  ao vivo, zoom, exportação PNG e exportação p/ LLM (instruções + bloco `mermaid`). Acesse pelo botão
+  ao lado de "Exportar p/ LLM".
+
+Em ambas as telas o **Importar** aceita o upload do arquivo (além de colar o texto).
 
 ## Estrutura
 
